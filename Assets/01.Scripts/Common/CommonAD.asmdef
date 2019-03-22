@@ -1,0 +1,10 @@
+{
+    "name": "CommonAD",
+    "references": [
+        "StageAD"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
