@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{4DDD0703-CB06-F534-9F75-F4D6B42162A5}</ProjectGuid>
+    <ProjectGuid>{C4BBBADB-22AE-042C-056B-B9ED30EE9655}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>CommonAD</AssemblyName>

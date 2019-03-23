@@ -1019,7 +1019,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1371812609}
   - component: {fileID: 1371812610}
-  - component: {fileID: 1371812608}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -1027,17 +1026,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1371812608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1371812607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 912260a66e26c174fbee443adb7b607f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1371812609
 Transform:
   m_ObjectHideFlags: 0
@@ -1066,12 +1054,12 @@ MonoBehaviour:
   tileBase:
   - {fileID: 11400000, guid: 98110c0dbfd183d4e9ff4a7820838782, type: 2}
   - {fileID: 11400000, guid: 1711d1ec0ab4e3b42984c5d2cb253854, type: 2}
-  - {fileID: 11400000, guid: 9555e97b174188748bc1c22656e499cc, type: 2}
+  - {fileID: 11400000, guid: 29ff8ff06cf7d304d96f54b69455982e, type: 2}
   - {fileID: 11400000, guid: 915dbb66b8bad734da7add540baab0ce, type: 2}
   - {fileID: 11400000, guid: ca36b39a3c1d37643b00556c7c37bed2, type: 2}
   - {fileID: 11400000, guid: 76a6780805066274abba1141680f981f, type: 2}
   grid: {fileID: 543916378}
-  tileNum: 6
+  mapSize: 6
 --- !u!1 &1578348042
 GameObject:
   m_ObjectHideFlags: 0
