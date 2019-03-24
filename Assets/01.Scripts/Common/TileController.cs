@@ -11,16 +11,19 @@ public class TileController : MonoBehaviour
     event listener touchBegin;
     event listener touchMove;
     event listener touchEnd;
-    List<List<Vector3Int>> _trackList;
-    Vector3Int[] _startPos;
+
+    List<Stack<Vector3Int>> _trackList;
+    Vector3Int[] _startTilePos;
     int _startTileNum;
     
     bool _isStartTile = false;
     bool _isBlockTile = false;
-    bool[] _isLastTile;
-
+    int _curLine = 0;
+    
     Vector3Int[] _blockTilePos;
     int _blockTileNum;
+
+    Vector3Int[] _lastTilePos;
 
     //Vector3Int[] _endPos;
 
@@ -29,80 +32,38 @@ public class TileController : MonoBehaviour
 
     private void Start()
     {
-        _startTileNum = MapManager.instance.StartTileNum;
-        _startPos = new Vector3Int[_startTileNum];
-        _startPos = MapManager.instance.StartTilePos;
-
-        _blockTileNum = MapManager.instance.BlockTileNum;
-        _blockTilePos = new Vector3Int[_blockTileNum];
-        _blockTilePos = MapManager.instance.BlockTilePos;
-
-        _isLastTile = new bool[_startTileNum];
-        _trackList = new List<List<Vector3Int>>();
-        Debug.Log(_startTileNum);
-        for(int i= 0; i < _startTileNum; i++)
-        {
-            _trackList.Add(new List<Vector3Int>());
-        }
-        _trackList[0].Insert(0, new Vector3Int(0,0,0));
-        Debug.Log(_trackList[0][0]);
-        //_endPos = new Vector3Int[_startTileNum];
-
-        touchBegin += (touches) =>
-        {
-            Vector3 clickPos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 클릭 좌표를 셀의 좌표로 변환하여 저장
-            Vector3Int tilePos = new Vector3Int((int)clickPos.x, (int)clickPos.y, 0); //저장된 좌표를 Vector3Int로 변환
-            for (int i = 0; i < _startTileNum; i++)
-            {
-                if (tilePos.x == _startPos[i].x && tilePos.y == _startPos[i].y)
-                {
-                    _isStartTile = true;
-                    _isLastTile[i] = true;
-                    return;
-                }
-            }
-            _isStartTile = false;
-        };
-        touchEnd += (touches) =>
-        {
-            _isStartTile = false;
-            _isBlockTile = false;
-        };
-        touchMove += (touches) =>
-        {
-            int tileCheck = 0;
-            for(tileCheck = 0; tileCheck < _startTileNum; tileCheck++)
-            {
-                if ((!_isStartTile || !_isLastTile[tileCheck]) && _isBlockTile)
-                {
-                    return;
-                }
-            }
-            if (tileCheck < _startTileNum)
-                return;
-            Vector3 slidePos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 슬라이드 좌표를 셀의 좌표로 변환하여 저장
-            Vector3Int tilePos = new Vector3Int((int)slidePos.x, (int)slidePos.y, 0); //저장된 좌표를 Vector3Int로 변환
-            
-
-            for (int i = 0; i < _blockTileNum; i++)
-            {
-                if (slidePos.x == _blockTilePos[i].x && slidePos.y == _blockTilePos[i].y)
-                {
-                    _isBlockTile = true;
-                    return;
-                }
-            }
-            MapManager.instance.ChangeTile(tilePos, MapManager.instance.TileIdx); //좌표 타일을 지정된 타일로 변경
-        };
+        
     }
     // Update is called once per frame
     void Update()
     {
         {
-            TileTouchEvent();
+            TileTouch();
         }
     }
-    void TileTouchEvent()
+    void Init()
+    {
+        _startTileNum = MapManager.instance.StartTileNum;
+        _startTilePos = new Vector3Int[_startTileNum];
+        _startTilePos = MapManager.instance.StartTilePos;
+
+        _blockTileNum = MapManager.instance.BlockTileNum;
+        _blockTilePos = new Vector3Int[_blockTileNum];
+        _blockTilePos = MapManager.instance.BlockTilePos;
+
+        _lastTilePos = new Vector3Int[_startTileNum];
+
+        //타일을 담을 리스트
+        _trackList = new List<Stack<Vector3Int>>();
+
+        for (int i = 0; i < _startTileNum; i++)
+        {
+            _trackList.Add(new Stack<Vector3Int>());
+            _lastTilePos[i] = new Vector3Int(0, 0, 0);
+            _trackList[i].Push(_startTilePos[i]);
+        }
+    }
+    void TileTouch()
     {
         int count = Input.touchCount;//터치 수
         if (count == 0) return;
@@ -126,6 +87,67 @@ public class TileController : MonoBehaviour
         if (begin) touchBegin(result);
         if (move) touchMove(result);
         if (end) touchEnd(result);
+    }
+    void TouchEvent()
+    {
+        touchBegin += (touches) =>
+        {
+            Vector3 clickPos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 클릭 좌표를 셀의 좌표로 변환하여 저장
+            Vector3Int tilePos = new Vector3Int((int)clickPos.x, (int)clickPos.y, 0); //저장된 좌표를 Vector3Int로 변환
+            int i;
+            for (i = 0; i < _startTileNum; i++)
+            {
+                if (tilePos.x == _startTilePos[i].x && tilePos.y == _startTilePos[i].y)
+                {
+                    _isStartTile = true;
+                    return;
+                }
+                else if (tilePos.x == _lastTilePos[i].x && tilePos.y == _lastTilePos[i].y)
+                {
+                    _curLine = i;
+                    return;
+                }
+                else
+                {
+                    _isStartTile = false;
+                }
+            }
+        };
+        touchEnd += (touches) =>
+        {
+            _isStartTile = false;
+            _isBlockTile = false;
+        };
+        touchMove += (touches) =>
+        {
+            int tileCheck = 0;
+            for (tileCheck = 0; tileCheck < _startTileNum; tileCheck++)
+            {
+                if ((!_isStartTile) && _isBlockTile)
+                {
+                    return;
+                }
+            }
+            if (tileCheck < _startTileNum)
+                return;
+            Vector3 slidePos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 슬라이드 좌표를 셀의 좌표로 변환하여 저장
+            Vector3Int tilePos = new Vector3Int((int)slidePos.x, (int)slidePos.y, 0); //저장된 좌표를 Vector3Int로 변환
+            for (int i = 0; i < _blockTileNum; i++)
+            {
+                if (slidePos.x == _blockTilePos[i].x && slidePos.y == _blockTilePos[i].y)
+                {
+                    _isBlockTile = true;
+                    return;
+                }
+            }
+            if (_trackList[_curLine].Pop() == tilePos)
+            {
+                _trackList[_curLine].Push(tilePos);
+                return;
+            }
+            _trackList[_curLine].Push(tilePos);
+            MapManager.instance.ChangeTile(tilePos, MapManager.instance.TileIdx); //좌표 타일을 지정된 타일로 변경
+        };
     }
     
 }

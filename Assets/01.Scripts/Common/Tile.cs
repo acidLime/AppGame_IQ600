@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public enum EDirection
+    public enum EFlipDir
     {
-        NONE,
         UP,
         DOWN,
         LEFT,
         RIGHT
+    }
+
+    public enum EDirection
+    {
+        NONE,
     }
     public enum ETileType
     {
@@ -19,7 +23,9 @@ public class Tile : MonoBehaviour
         NORMAL,
         BLOCK,
         SLOW,
-        TRAP
+        TRAP,
+        VERTICAL,
+        HORIZONTAL,
     }
     //public EDirection Direction
     //{

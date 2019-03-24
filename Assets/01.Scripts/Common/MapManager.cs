@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class MapManager : MonoBehaviour {
 
     public Tilemap tilemap;
-    public TileBase[] tileBase;
+    [SerializeField] TileBase[] tileBase;
     public GameObject grid;
 
     public static MapManager instance;
@@ -19,7 +19,6 @@ public class MapManager : MonoBehaviour {
 
     //최소 맵 크기
     int minMapSize = 6;
-
 
     int _stageLevel = 1;
     public int StageLevel
@@ -162,7 +161,6 @@ public class MapManager : MonoBehaviour {
         //num 6 = 1.25, num 7 = 1.07125, num 8 = 0.9375, num 9 = 0.833, num 10 = 0.75 
         //맵 크기 = 64 * 타일 수 * 그리드 사이즈
         float gridSize = 7.5f / mapSize;
-        
         grid.transform.localScale = new Vector3(gridSize, gridSize, 1); // 타일 갯수에 따른 맵사이즈 조절
         tilemap.BoxFill(new Vector3Int(mapSize - 1, mapSize - 1, 0), tileBase[(int)Tile.ETileType.NORMAL], 0, 0, mapSize, mapSize);//지정범위만큼 타일 채움
         //데이터 추출 후, 타일 세팅
@@ -182,17 +180,18 @@ public class MapManager : MonoBehaviour {
         //startTile이면 리턴
         for(int i = 0; i < _startTileNum; i++)
         {
-            if (_startTilePos[i].x == position.x &&
-                _startTilePos[i].y == position.y)
+            if (_startTilePos[i] == position)
                 return;
         }
         //장애물이면 리턴
         for(int i = 0; i < _blockTileNum; i++)
         {
-            if (position.x == _blockTilePos[i].x &&
-                position.y == _blockTilePos[i].y)
+            if (position == _blockTilePos[i])
                 return;
         }
+        //도착타일이면 리턴
+        if (position == _endTilePos)
+            return;
         tilemap.SetTile(position, tileBase[(int)tileType]);
     }
     public void SetTileIdx(int tileIdx)

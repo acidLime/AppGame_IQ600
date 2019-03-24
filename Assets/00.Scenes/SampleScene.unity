@@ -1058,6 +1058,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 915dbb66b8bad734da7add540baab0ce, type: 2}
   - {fileID: 11400000, guid: ca36b39a3c1d37643b00556c7c37bed2, type: 2}
   - {fileID: 11400000, guid: 76a6780805066274abba1141680f981f, type: 2}
+  - {fileID: 11400000, guid: 6351ffd29f34bd447baba94a4bb8c59a, type: 2}
+  - {fileID: 11400000, guid: 25496a484a3914c48bb086d4a1dcb4f1, type: 2}
+  - {fileID: 11400000, guid: 8ea9a8bceee5d5c4bb59cda34da10e63, type: 2}
   grid: {fileID: 543916378}
   mapSize: 6
 --- !u!1 &1578348042
@@ -1070,7 +1073,7 @@ GameObject:
   - component: {fileID: 1578348044}
   - component: {fileID: 1578348043}
   m_Layer: 0
-  m_Name: TileController
+  m_Name: TouchSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1084,7 +1087,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1578348042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 181faa9dc9addea45baa6228daac1c45, type: 3}
+  m_Script: {fileID: 11500000, guid: 15a33bf7a579f5942a380fce766bfd2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _cam: {fileID: 519420031}
