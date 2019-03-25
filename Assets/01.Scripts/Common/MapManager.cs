@@ -212,7 +212,7 @@ public class MapManager : MonoBehaviour {
         int blockIdx = 0;
         int slowIdx = 0;
         int trapIdx = 0;
-
+        Debug.Log(tilemap.GetTile(new Vector3Int(1,1,0)));
         while((int)_tileData[dataIdx]["stage"] == _stageLevel)
         {
             switch((int)_tileData[dataIdx]["tileType"])

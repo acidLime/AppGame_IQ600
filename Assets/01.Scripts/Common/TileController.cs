@@ -147,6 +147,7 @@ public class TileController : MonoBehaviour
             }
             _trackList[_curLine].Push(tilePos);
             MapManager.instance.ChangeTile(tilePos, MapManager.instance.TileIdx); //좌표 타일을 지정된 타일로 변경
+            
         };
     }
     

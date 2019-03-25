@@ -10,10 +10,12 @@ public class TouchSystem : MonoBehaviour {
 
     event listener touchBegin;
     event listener touchMove;
+    event listener touchStationary;
     event listener touchEnd;
 
     bool _isReset = false;
-    bool _isStartTile = false;
+    bool _isDraw = false;
+    bool _isMove = false;
 
     List<Stack<Vector3Int>> _trackList;
     int _curTrack = 0;
@@ -45,8 +47,8 @@ public class TouchSystem : MonoBehaviour {
         if (count == 0) return;
 
         //이벤트 플래그
-        bool begin, move, end;
-        begin = move = end = false;
+        bool begin, move, stationary, end;
+        begin = move = stationary = end = false;
 
         ArrayList result = new ArrayList();
 
@@ -58,10 +60,12 @@ public class TouchSystem : MonoBehaviour {
             result.Add(touch);
             if (touch.phase == TouchPhase.Began && touchBegin != null) begin = true;
             else if (touch.phase == TouchPhase.Moved && touchMove != null) move = true;
+            else if (touch.phase == TouchPhase.Stationary && touchMove != null) move = true;
             else if (touch.phase == TouchPhase.Ended && touchEnd != null) end = true;
         }
         if (begin) touchBegin(result);
         if (move) touchMove(result);
+        if (move) touchStationary(result);
         if (end) touchEnd(result);
     }
     void TouchFlags()
@@ -70,22 +74,31 @@ public class TouchSystem : MonoBehaviour {
         {
             Vector3 clickPos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 클릭 좌표를 셀의 좌표로 변환하여 저장
             Vector3Int clickPosToTile = new Vector3Int((int)clickPos.x, (int)clickPos.y, 0); //저장된 좌표를 Vector3Int로 변환
-            _isStartTile = TileCheck(clickPosToTile);
+            _isDraw = TileCheck(clickPosToTile);
         };
         touchEnd += (touches) =>
         {
         };
+        touchStationary += (touches) =>
+        {
+            
+        };
         touchMove += (touches) =>
         {
             //시작타일이 아니라면 리턴
-            if (!_isStartTile)
+            if (!_isDraw)
                 return;
             Vector3 slidePos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 슬라이드 좌표를 셀의 좌표로 변환하여 저장
             Vector3Int slidePosToTile = new Vector3Int((int)slidePos.x, (int)slidePos.y, 0); //저장된 좌표를 Vector3Int로 변환
 
-            if (_trackList[_curTrack].Peek() == slidePosToTile)
+            if (slidePosToTile == _startTilePos[_curTrack])
                 return;
-
+            if (_trackList[_curTrack].Peek() == slidePosToTile) //  
+            {
+                MapManager.instance.ChangeTile(_trackList[_curTrack].Pop(), Tile.ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
+                _prevTilePos = _trackList[_curTrack].Peek();
+                return;
+            }
             _prevTilePos = _trackList[_curTrack].Peek();
 
             _trackList[_curTrack].Push(slidePosToTile);
@@ -118,8 +131,8 @@ public class TouchSystem : MonoBehaviour {
     {
         for(int i = 0; i < _startTileNum; i++)
         {
-            //타일 좌표가 시작타일과 같다면
-            if (tilePos == _startTilePos[i])
+            //타일 좌표가 마지막 타일과 같다면
+            if (tilePos == _trackList[i].Peek())
             {
                 _curTrack = i;
                 return true;
