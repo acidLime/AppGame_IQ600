@@ -90,15 +90,34 @@ public class TouchSystem : MonoBehaviour {
                 return;
             Vector3 slidePos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 슬라이드 좌표를 셀의 좌표로 변환하여 저장
             Vector3Int slidePosToTile = new Vector3Int((int)slidePos.x, (int)slidePos.y, 0); //저장된 좌표를 Vector3Int로 변환
+            //그릴 수 있는 타일인지 확인
+            //그릴 수 없다면
+                //장애물이라면 리턴
+                //길이라면
+                    //현재 그리는 트랙과 같은 트랙인가 체크
+                        //다른 트랙이라면 리턴
+                        //같은 트랙이라면
+                            //이전 타일이 아니라면
+                                //리턴
+                            //길이 그리기 이전 타일이라면
+                                //스택에서 Pop하고 그 위치를 노말값으로 바꿈
+                                //그릴 수 있는 타일로 변경
+            //그릴 수 있다면
+                //현재 좌표가 이전 좌표와 같다면 리턴
+                //아니라면
+                    //타일의 방향을 설정
+                    //타일을 그림
+                    //그릴 수 없는 타일로 바꿈
+                    //현재 좌표를 현재 트랙 스택에 푸시
 
-            if (slidePosToTile == _startTilePos[_curTrack])
-                return;
-            if (_trackList[_curTrack].Peek() == slidePosToTile) //  
-            {
-                MapManager.instance.ChangeTile(_trackList[_curTrack].Pop(), Tile.ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
-                _prevTilePos = _trackList[_curTrack].Peek();
-                return;
-            }
+            //if (slidePosToTile == _startTilePos[_curTrack])
+                //return;
+            //if (_trackList[_curTrack].Peek() == slidePosToTile) //  
+            //{
+            //    MapManager.instance.ChangeTile(_trackList[_curTrack].Pop(), Tile.ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
+            //    _prevTilePos = _trackList[_curTrack].Peek();
+            //    return;
+            //}
             _prevTilePos = _trackList[_curTrack].Peek();
 
             _trackList[_curTrack].Push(slidePosToTile);
