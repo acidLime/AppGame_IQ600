@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
@@ -10,30 +11,15 @@ public class TouchSystem : MonoBehaviour {
 
     event listener touchBegin;
     event listener touchMove;
-    event listener touchStationary;
     event listener touchEnd;
 
-    bool _isReset = false;
-    bool _isDraw = false;
-    bool _isMove = false;
-
-    List<Stack<Vector3Int>> _trackList;
-    int _curTrack = 0;
-
-    [SerializeField] private Camera _cam;
-    public Tilemap tilemap;
-
-    Vector3Int[] _startTilePos;
-    Vector3Int _prevTilePos;
-
-    int _startTileNum = 0;
+    TouchEvent touchEvent;
 
     // Use this for initialization
     void Start()
     {
-        Init();
-
         TouchFlags();
+        touchEvent = GetComponent<TouchEvent>();
     }
 	
 	// Update is called once per frame
@@ -63,110 +49,29 @@ public class TouchSystem : MonoBehaviour {
             else if (touch.phase == TouchPhase.Stationary && touchMove != null) move = true;
             else if (touch.phase == TouchPhase.Ended && touchEnd != null) end = true;
         }
+
         if (begin) touchBegin(result);
         if (move) touchMove(result);
-        if (move) touchStationary(result);
         if (end) touchEnd(result);
     }
+    
     void TouchFlags()
     {
         touchBegin += (touches) =>
         {
-            Vector3 clickPos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 클릭 좌표를 셀의 좌표로 변환하여 저장
-            Vector3Int clickPosToTile = new Vector3Int((int)clickPos.x, (int)clickPos.y, 0); //저장된 좌표를 Vector3Int로 변환
-            _isDraw = TileCheck(clickPosToTile);
+            touchEvent.IsStart = touchEvent.IsStartTile(touchEvent.GetTilePos());
+            if (touchEvent.IsStart)
+                touchEvent.PrevTilePos = touchEvent.GetPrevTilePos();
         };
         touchEnd += (touches) =>
         {
         };
-        touchStationary += (touches) =>
-        {
-            
-        };
         touchMove += (touches) =>
         {
-            //시작타일이 아니라면 리턴
-            if (!_isDraw)
+            Vector3Int slidePos = touchEvent.GetTilePos();
+            if (!touchEvent.CanTouchProc(slidePos) || !touchEvent.CanTileDraw(slidePos))
                 return;
-            Vector3 slidePos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 슬라이드 좌표를 셀의 좌표로 변환하여 저장
-            Vector3Int slidePosToTile = new Vector3Int((int)slidePos.x, (int)slidePos.y, 0); //저장된 좌표를 Vector3Int로 변환
-            //그릴 수 있는 타일인지 확인
-            //그릴 수 없다면
-                //장애물이라면 리턴
-                //길이라면
-                    //현재 그리는 트랙과 같은 트랙인가 체크
-                        //다른 트랙이라면 리턴
-                        //같은 트랙이라면
-                            //이전 타일이 아니라면
-                                //리턴
-                            //길이 그리기 이전 타일이라면
-                                //스택에서 Pop하고 그 위치를 노말값으로 바꿈
-                                //그릴 수 있는 타일로 변경
-            //그릴 수 있다면
-                //현재 좌표가 이전 좌표와 같다면 리턴
-                //아니라면
-                    //타일의 방향을 설정
-                    //타일을 그림
-                    //그릴 수 없는 타일로 바꿈
-                    //현재 좌표를 현재 트랙 스택에 푸시
-
-            //if (slidePosToTile == _startTilePos[_curTrack])
-                //return;
-            //if (_trackList[_curTrack].Peek() == slidePosToTile) //  
-            //{
-            //    MapManager.instance.ChangeTile(_trackList[_curTrack].Pop(), Tile.ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
-            //    _prevTilePos = _trackList[_curTrack].Peek();
-            //    return;
-            //}
-            _prevTilePos = _trackList[_curTrack].Peek();
-
-            _trackList[_curTrack].Push(slidePosToTile);
-            SetDirection(_prevTilePos, slidePosToTile);
-            MapManager.instance.ChangeTile(slidePosToTile, MapManager.instance.TileIdx); //좌표 타일을 지정된 타일로 변경
+            touchEvent.DrawTile(slidePos);
         };
-    }
-    void Init()
-    {
-        _trackList = new List<Stack<Vector3Int>>();
-
-        _startTileNum = MapManager.instance.StartTileNum;
-
-        _startTilePos = new Vector3Int[_startTileNum];
-        _startTilePos = MapManager.instance.StartTilePos;
-
-        for (int i = 0; i < _startTileNum; i++)
-        {
-            _trackList.Add(new Stack<Vector3Int>());
-            _trackList[i].Push(_startTilePos[i]);
-        }
-    }
-    //타일을 리셋시킴
-    private void TileReset(int lineNum)
-    {
-        while(_trackList[lineNum].Count > 1)
-            MapManager.instance.ChangeTile(_trackList[lineNum].Pop(), Tile.ETileType.NORMAL);
-    }
-    bool TileCheck(Vector3Int tilePos)
-    {
-        for(int i = 0; i < _startTileNum; i++)
-        {
-            //타일 좌표가 마지막 타일과 같다면
-            if (tilePos == _trackList[i].Peek())
-            {
-                _curTrack = i;
-                return true;
-            }
-        }
-        return false;
-    }
-    //방향에 따른 타일설정
-    void SetDirection(Vector3Int prevTile, Vector3Int tilePos)
-    {
-        Vector3Int tileDir;
-        tileDir = tilePos - prevTile;
-        if (tileDir.x != 0)
-            MapManager.instance.SetTileIdx((int)Tile.ETileType.HORIZONTAL);
-        if (tileDir.y != 0)
-            MapManager.instance.SetTileIdx((int)Tile.ETileType.VERTICAL);
     }
 }

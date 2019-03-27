@@ -41,6 +41,7 @@ public class MapManager : MonoBehaviour {
             return _startTilePos;
         }
     }
+
     int _startTileNum = 0;
     public int StartTileNum
     {
@@ -67,6 +68,7 @@ public class MapManager : MonoBehaviour {
             return _blockTilePos;
         }
     }
+
     int _blockTileNum = 0;
     public int BlockTileNum
     {
@@ -84,6 +86,7 @@ public class MapManager : MonoBehaviour {
             return _slowTilePos;
         }
     }
+
     int _slowTileNum = 0;
     public int SlowTileNum
     {
@@ -101,6 +104,7 @@ public class MapManager : MonoBehaviour {
             return _trapTilePos;
         }
     }
+
     int _trapTileNum = 0;
     public int TrapTileNum
     {
@@ -120,6 +124,15 @@ public class MapManager : MonoBehaviour {
         set
         {
             _tileIdx = value;
+        }
+    }
+
+    bool[,] _canDraw;
+    public bool[,] IsDraw
+    {
+        get
+        {
+            return _canDraw;
         }
     }
 
@@ -157,6 +170,14 @@ public class MapManager : MonoBehaviour {
 
         if (mapSize < minMapSize)
             mapSize = minMapSize;
+        _canDraw = new bool[mapSize, mapSize];
+        for (int i = 0; i < mapSize; i++)
+        {
+            for(int j = 0; j<mapSize; j++)
+            {
+                _canDraw[i,j] = true;
+            }
+        }
         //7.5는 화면대비 타일 비율
         //num 6 = 1.25, num 7 = 1.07125, num 8 = 0.9375, num 9 = 0.833, num 10 = 0.75 
         //맵 크기 = 64 * 타일 수 * 그리드 사이즈
@@ -169,6 +190,7 @@ public class MapManager : MonoBehaviour {
             tilemap.SetTile(new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0), tileBase[(int)_tileData[dataIdx]["tileType"]]);
             dataIdx++;
         }
+         
         FindAndSetSpecialTilePos();
     }
     public void ChangeTile(Vector3Int position, Tile.ETileType tileType)
@@ -212,19 +234,22 @@ public class MapManager : MonoBehaviour {
         int blockIdx = 0;
         int slowIdx = 0;
         int trapIdx = 0;
-        Debug.Log(tilemap.GetTile(new Vector3Int(1,1,0)));
+
         while((int)_tileData[dataIdx]["stage"] == _stageLevel)
         {
-            switch((int)_tileData[dataIdx]["tileType"])
+
+            switch ((int)_tileData[dataIdx]["tileType"])
             {
                 case (int)Tile.ETileType.START:
                     _startTilePos[startTileNum++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
+                    _canDraw[(int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"]] = false;
                     break;
                 case (int)Tile.ETileType.END:
                     _endTilePos = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
                     break;
                 case (int)Tile.ETileType.BLOCK:
                     _blockTilePos[blockIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
+                    _canDraw[(int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"]] = false;
                     break;
                 case (int)Tile.ETileType.SLOW:
                     _slowTilePos[slowIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
