@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public enum EFlipDir
+    public enum ECharacterDir
     {
         UP,
         DOWN,

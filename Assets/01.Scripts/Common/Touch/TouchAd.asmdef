@@ -1,0 +1,11 @@
+{
+    "name": "TouchAd",
+    "references": [
+        "MapAD",
+        "CharacterAD"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

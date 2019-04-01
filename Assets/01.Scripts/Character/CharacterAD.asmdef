@@ -1,0 +1,10 @@
+{
+    "name": "CharacterAD",
+    "references": [
+        "MapAD"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

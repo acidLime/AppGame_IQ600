@@ -62,11 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\01.Scripts\Common\CSVReader.cs" />
-    <Compile Include="Assets\01.Scripts\Common\MapManager.cs" />
-    <Compile Include="Assets\01.Scripts\Common\Tile.cs" />
-    <Compile Include="Assets\01.Scripts\Common\TileController.cs" />
-    <Compile Include="Assets\01.Scripts\Common\TouchEvent.cs" />
-    <Compile Include="Assets\01.Scripts\Common\TouchSystem.cs" />
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.19f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>

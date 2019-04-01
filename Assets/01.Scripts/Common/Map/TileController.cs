@@ -30,10 +30,6 @@ public class TileController : MonoBehaviour
     [SerializeField] private Camera _cam;
     public Tilemap tilemap;
 
-    private void Start()
-    {
-        
-    }
     // Update is called once per frame
     void Update()
     {

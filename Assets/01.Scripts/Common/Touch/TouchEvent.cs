@@ -25,7 +25,21 @@ public class TouchEvent : MonoBehaviour {
     bool[,] _canDraw;
     int mapSize = 0;
     List<Stack<Vector3Int>> _trackList;
+    public List<Stack<Vector3Int>> TrackList
+    {
+        get
+        {
+            return _trackList;
+        }
+    }
     int _curTrack = 0;
+    public int CurTrack
+    {
+        get
+        {
+            return _curTrack;
+        }
+    }
 
     Vector3Int[] _startTilePos;
     Vector3Int _prevTilePos;
@@ -42,9 +56,6 @@ public class TouchEvent : MonoBehaviour {
     }
 
     int _startTileNum = 0;
-    private void Awake()
-    {
-    }
     private void Start()
     {
         Init();
@@ -52,14 +63,16 @@ public class TouchEvent : MonoBehaviour {
     public void Init()
     {
         _trackList = new List<Stack<Vector3Int>>();
-
         _startTileNum = MapManager.instance.StartTileNum;
 
         _startTilePos = new Vector3Int[_startTileNum];
         _startTilePos = MapManager.instance.StartTilePos;
+
         _canDraw = new bool[MapManager.instance.mapSize, MapManager.instance.mapSize];
         _canDraw = MapManager.instance.IsDraw;
+
         mapSize = MapManager.instance.mapSize;
+
         for (int i = 0; i < _startTileNum; i++)
         {
             _trackList.Add(new Stack<Vector3Int>());
@@ -70,6 +83,7 @@ public class TouchEvent : MonoBehaviour {
     {
         Vector3Int top = _trackList[_curTrack].Pop();
         Vector3Int value;
+
         if (_trackList[_curTrack].Count == 0)
             value = _startTilePos[_curTrack];
         else
@@ -166,6 +180,7 @@ public class TouchEvent : MonoBehaviour {
         _canDraw[tilePos.x, tilePos.y] = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
+        CharacterCtrl.instance.CharacterMoveTile[_curTrack].Enqueue(tilemap.CellToWorld(tilePos));
     }
     public Vector3Int GetTilePos()
     {
