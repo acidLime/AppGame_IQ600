@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchAd", "TouchAd.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CharacterAD", "CharacterAD.csproj", "{B6A8EFE7-9BAD-72E2-89A5-DE39DB30CF61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{3A3BC636-A254-9719-064B-367ABFDCACD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{B6A8EFE7-9BAD-72E2-89A5-DE39DB30CF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6A8EFE7-9BAD-72E2-89A5-DE39DB30CF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6A8EFE7-9BAD-72E2-89A5-DE39DB30CF61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A3BC636-A254-9719-064B-367ABFDCACD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A3BC636-A254-9719-064B-367ABFDCACD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A3BC636-A254-9719-064B-367ABFDCACD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A3BC636-A254-9719-064B-367ABFDCACD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

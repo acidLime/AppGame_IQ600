@@ -119,6 +119,7 @@ public class TouchEvent : MonoBehaviour {
                     return false;
             }
             Vector3Int stackTop = _trackList[_curTrack].Pop();
+            CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count - 1);
             MapManager.instance.ChangeTile(stackTop, Tile.ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
                                                                              //그릴 수 있는 타일로 변경
             _canDraw[stackTop.x, stackTop.y] = true;
@@ -131,6 +132,7 @@ public class TouchEvent : MonoBehaviour {
     {
         while (_trackList[lineNum].Count > 1)
             MapManager.instance.ChangeTile(_trackList[lineNum].Pop(), Tile.ETileType.NORMAL);
+        CharacterCtrl.instance.CharacterMoveTile.Clear();
     }
     public bool IsStartTile(Vector3Int tilePos)
     {
@@ -139,7 +141,6 @@ public class TouchEvent : MonoBehaviour {
             //타일 좌표가 마지막 타일과 같다면
             if (tilePos == _trackList[i].Peek())
             {
-
                 _curTrack = i;
                 return true;
             }
@@ -180,7 +181,7 @@ public class TouchEvent : MonoBehaviour {
         _canDraw[tilePos.x, tilePos.y] = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
-        CharacterCtrl.instance.CharacterMoveTile[_curTrack].Enqueue(tilemap.CellToWorld(tilePos));
+        CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(tilePos));
     }
     public Vector3Int GetTilePos()
     {

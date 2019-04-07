@@ -135,7 +135,14 @@ public class MapManager : MonoBehaviour {
             return _canDraw;
         }
     }
-
+    float _gridSize;
+    public float GridSize
+    {
+        get
+        {
+            return _gridSize;
+        }
+    }
     private void Awake()
     {
         //instance가 null이면
@@ -155,9 +162,6 @@ public class MapManager : MonoBehaviour {
 
     }
     // Use this for initialization
-    void Start()
-    {
-    }
 
     // Update is called once per frame
     public void InitMap()
@@ -178,11 +182,10 @@ public class MapManager : MonoBehaviour {
                 _canDraw[i,j] = true;
             }
         }
-        //7.5는 화면대비 타일 비율
+        _gridSize = 8.8f / mapSize;
         //num 6 = 1.25, num 7 = 1.07125, num 8 = 0.9375, num 9 = 0.833, num 10 = 0.75 
         //맵 크기 = 64 * 타일 수 * 그리드 사이즈
-        float gridSize = 7.5f / mapSize;
-        grid.transform.localScale = new Vector3(gridSize, gridSize, 1); // 타일 갯수에 따른 맵사이즈 조절
+        grid.transform.localScale = new Vector3(_gridSize, _gridSize, 1); // 타일 갯수에 따른 맵사이즈 조절
         tilemap.BoxFill(new Vector3Int(mapSize - 1, mapSize - 1, 0), tileBase[(int)Tile.ETileType.NORMAL], 0, 0, mapSize, mapSize);//지정범위만큼 타일 채움
         //데이터 추출 후, 타일 세팅
         while((int)_tileData[dataIdx]["stage"] == _stageLevel)
