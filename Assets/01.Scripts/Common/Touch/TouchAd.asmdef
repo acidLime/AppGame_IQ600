@@ -2,7 +2,8 @@
     "name": "TouchAd",
     "references": [
         "MapAD",
-        "CharacterAD"
+        "CharacterAD",
+        "CommonAD"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

@@ -28,8 +28,25 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		
 	}
-    void GameEnd()
+    public void GameStart(int stageLevel)
+    {
+        Debug.Log("GameStart");
+        
+    }
+    public void EndGame()
     {
         Debug.Log("end");
+    }
+    public void ReStart()
+    {
+        Debug.Log("Reset");
+    }
+    public void SoundOn()
+    {
+
+    }
+    public void Option()
+    {
+
     }
 }

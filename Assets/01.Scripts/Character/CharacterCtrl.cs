@@ -75,9 +75,9 @@ public class CharacterCtrl : MonoBehaviour
 	}
     void Init()
     {
-        _characterNum = MapManager.instance.StartTileNum;
+        _characterNum = DataManager.instance.StartTileNum;
         wait = new WaitForSeconds(waitTime);
-        float gridSize = MapManager.instance.GridSize;
+        float gridSize = DataManager.instance.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
         targetPos = new Vector3[_characterNum];
         _characterMoveCount = new int[_characterNum];
@@ -88,7 +88,7 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile.Add(new List<Vector3>());
             
             //_characterMoveTile.Add(new Queue<Vector3>());
-            Vector3 worldPos = characterTilemap.CellToWorld(MapManager.instance.StartTilePos[i]);
+            Vector3 worldPos = characterTilemap.CellToWorld(DataManager.instance.StartTilePos[i]);
             //_characterMoveTile[i].Enqueue(worldPos);
             _characterMoveTile[i].Add(worldPos);
             _character[i].SetActive(true);
@@ -103,6 +103,10 @@ public class CharacterCtrl : MonoBehaviour
     {
         while(_characterMoveTile[characterIdx].Count > 0)
         {
+            if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx])
+            {
+                break;
+            }
             targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
             _canMove[characterIdx] = true;
             yield return wait;
@@ -111,7 +115,7 @@ public class CharacterCtrl : MonoBehaviour
     IEnumerator CharacterMoveStart()
     {
 
-        int characterIdx = MapManager.instance.StartTileNum -1;
+        int characterIdx = DataManager.instance.StartTileNum -1;
         while (characterIdx >= 0)
         {
             yield return wait;
@@ -123,7 +127,7 @@ public class CharacterCtrl : MonoBehaviour
         Vector3 diff = _character[characterIdx].transform.position - targetPos[characterIdx];
         _character[characterIdx].transform.position = Vector3.MoveTowards(_character[characterIdx].transform.position,
             targetPos[characterIdx], 1.0f * Time.deltaTime);
-        if (diff.sqrMagnitude < 0.1f * 0.1f)
+        if (diff.sqrMagnitude < 0.01f * 0.01f)
             _canMove[characterIdx] = false;
     }
 }
