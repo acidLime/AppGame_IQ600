@@ -5,14 +5,22 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    public Text[] tileCount;
+    public GameObject[] characterInfo;
 	// Use this for initialization
-	void Start () {
-		
-	}
+	void Start ()
+    {
+        ShowCharacterInfo(0);
+    }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+    public void ShowCharacterInfo(int characterCount)
+    {
+        for(int i = 0; i < characterCount; i++)
+        {
+            characterInfo[i].SetActive(true);
+        }
+    }
 }

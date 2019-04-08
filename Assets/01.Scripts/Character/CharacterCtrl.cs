@@ -12,14 +12,14 @@ public enum CharacterDir
 }
 public class CharacterCtrl : MonoBehaviour
 {
-    
+    DataManager DM;
     public GridLayout characterTilemap;
-    public Tilemap Trackmap;
     public CharacterDir characterDir;
     public static CharacterCtrl instance;
     bool[] _canMove;
     int _characterNum;
     int[] _characterMoveCount;
+    public GameObject characterPrefab;
 
     Vector3[] targetPos;
 
@@ -36,7 +36,7 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile = value;
         }
     }
-    public GameObject[] _character;
+    GameObject[] _character;
 
     TileBase[] _tileBase;
 
@@ -58,6 +58,7 @@ public class CharacterCtrl : MonoBehaviour
             //instance를 삭제
             Destroy(gameObject);
         }
+        DM = DataManager.instance;
         Init();
         StartCoroutine(CharacterMoveStart());
     }
@@ -75,9 +76,10 @@ public class CharacterCtrl : MonoBehaviour
 	}
     void Init()
     {
-        _characterNum = DataManager.instance.StartTileNum;
+        _characterNum = DM.StartTileNum;
+        _character = new GameObject[_characterNum];
         wait = new WaitForSeconds(waitTime);
-        float gridSize = DataManager.instance.GridSize;
+        float gridSize = DM.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
         targetPos = new Vector3[_characterNum];
         _characterMoveCount = new int[_characterNum];
@@ -86,14 +88,13 @@ public class CharacterCtrl : MonoBehaviour
         for (int i = 0; i < _characterNum; i++)
         {
             _characterMoveTile.Add(new List<Vector3>());
-            
-            //_characterMoveTile.Add(new Queue<Vector3>());
-            Vector3 worldPos = characterTilemap.CellToWorld(DataManager.instance.StartTilePos[i]);
-            //_characterMoveTile[i].Enqueue(worldPos);
+            Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
+            _character[i] = Instantiate(characterPrefab, _characterMoveTile[i][0], Quaternion.identity);
+
             _character[i].SetActive(true);
             _character[i].transform.localScale = new Vector3(gridSize, gridSize, 1);
-            _character[i].transform.position = _characterMoveTile[i][0];
+            //_character[i].transform.position = _characterMoveTile[i][0];
             _characterMoveCount[i] = 0;
             _canMove[i] = false;
         }
@@ -115,7 +116,7 @@ public class CharacterCtrl : MonoBehaviour
     IEnumerator CharacterMoveStart()
     {
 
-        int characterIdx = DataManager.instance.StartTileNum -1;
+        int characterIdx = DM.StartTileNum -1;
         while (characterIdx >= 0)
         {
             yield return wait;
