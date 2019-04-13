@@ -1,6 +1,8 @@
 {
     "name": "CommonAD",
-    "references": [],
+    "references": [
+        "UIAD"
+    ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],

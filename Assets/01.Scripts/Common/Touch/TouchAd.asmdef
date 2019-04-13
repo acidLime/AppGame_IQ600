@@ -3,7 +3,8 @@
     "references": [
         "MapAD",
         "CharacterAD",
-        "CommonAD"
+        "CommonAD",
+        "UIAD"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

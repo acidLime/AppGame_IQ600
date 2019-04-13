@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    UIManager UI;
     public static GameManager instance;
     private void Awake()
     {
@@ -20,8 +21,11 @@ public class GameManager : MonoBehaviour {
         }
     }
     // Use this for initialization
-    void Start () {
-		
+    void Start ()
+    {
+        //UI = UIManager.instance;
+        //int idx = DataManager.instance.StartTileNum;
+        //UI.ShowCharacterInfo(idx);
 	}
 	
 	// Update is called once per frame

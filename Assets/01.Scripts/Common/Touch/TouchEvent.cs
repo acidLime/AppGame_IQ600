@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TouchEvent : MonoBehaviour {
+public class TouchEvent : MonoBehaviour
+{
 
+    UIManager UI;
+    MapManager MM;
     bool _isStart = false;
     public Tilemap tilemap;
     [SerializeField] private Camera _cam; //터치카메라
-
+    EDir _prevDir;
+    EDir _curDir;
     public bool IsStart
     {
         get
@@ -60,6 +64,8 @@ public class TouchEvent : MonoBehaviour {
     }
     public void Init()
     {
+        UI = UIManager.instance;
+        MM = MapManager.instance;
         _trackList = new List<Stack<Vector3Int>>();
         _startTileNum = DataManager.instance.StartTileNum;
 
@@ -71,10 +77,13 @@ public class TouchEvent : MonoBehaviour {
 
         mapSize = DataManager.instance.MapSize;
 
+        _curDir = EDir.NONE;
+        _prevDir = EDir.NONE;
         for (int i = 0; i < _startTileNum; i++)
         {
             _trackList.Add(new Stack<Vector3Int>());
             _trackList[i].Push(_startTilePos[i]);
+
         }
     }
     public Vector3Int GetPrevTilePos()
@@ -118,7 +127,7 @@ public class TouchEvent : MonoBehaviour {
             }
             Vector3Int stackTop = _trackList[_curTrack].Pop();
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count - 1);
-            MapManager.instance.ChangeTile(stackTop, ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
+            MM.ChangeTile(stackTop, ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
             //그릴 수 있는 타일로 변경
             _canDraw[stackTop.x, stackTop.y] = true;
             return false;
@@ -129,7 +138,7 @@ public class TouchEvent : MonoBehaviour {
     public void TileReset(int lineNum)
     {
         while (_trackList[lineNum].Count > 1)
-            MapManager.instance.ChangeTile(_trackList[lineNum].Pop(), ETileType.NORMAL);
+            MM.ChangeTile(_trackList[lineNum].Pop(), ETileType.NORMAL);
         CharacterCtrl.instance.CharacterMoveTile.Clear();
     }
     public bool IsStartTile(Vector3Int tilePos)
@@ -150,14 +159,28 @@ public class TouchEvent : MonoBehaviour {
     {
         Vector3Int tileDir;
         tileDir = tilePos - prevTile;
-        if (tileDir.x != 0)
+        _prevDir = _curDir;
+        if (tileDir.x > 0)
         {
-            MapManager.instance.SetTileIdx((int)ETileType.HORIZONTAL);
+            MM.SetTileIdx((int)ETileType.HORIZONTAL);
+            _curDir = EDir.RIGHT;
         }
-        if (tileDir.y != 0)
+        if(tileDir.x < 0)
         {
-            MapManager.instance.SetTileIdx((int)ETileType.VERTICAL);
+            MM.SetTileIdx((int)ETileType.HORIZONTAL);
+            _curDir = EDir.LEFT;
         }
+        if (tileDir.y > 0)
+        {
+            MM.SetTileIdx((int)ETileType.VERTICAL);
+            _curDir = EDir.DOWN;
+        }
+        if (tileDir.y < 0)
+        {
+            MM.SetTileIdx((int)ETileType.VERTICAL);
+            _curDir = EDir.UP;
+        }
+        MM.SetCurveTile(prevTile, _curDir);
     }
     public bool CanTileDraw(Vector3Int tilePos)
     {
@@ -178,17 +201,26 @@ public class TouchEvent : MonoBehaviour {
         //타일의 방향을 설정
         SetDirection(_trackList[_curTrack].Peek(), tilePos);
         //타일을 그림
-        MapManager.instance.ChangeTile(tilePos, MapManager.instance.TileIdx); //좌표 타일을 지정된 타일로 변경
+        MM.ChangeTile(tilePos, MapManager.instance.TileIdx); //좌표 타일을 지정된 타일로 변경
         //그릴 수 없는 타일로 변경
         _canDraw[tilePos.x, tilePos.y] = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
         CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(tilePos));
+        UI.UpdataCharacterInfo(_curTrack, CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count);
     }
     public Vector3Int GetTilePos()
     {
         Vector3 touchPos = tilemap.WorldToCell(_cam.ScreenToWorldPoint(Input.mousePosition)); // 터치된 좌표를 셀의 좌표로 변환하여 저장
         Vector3Int touchPosToTile = new Vector3Int((int)touchPos.x, (int)touchPos.y, 0); //저장된 좌표를 Vector3Int로 변환
         return touchPosToTile;
+    }
+    public void ChangeLastTile()
+    {
+        MM.ChangeTile(TrackList[_curTrack].Peek(), ETileType.LAST);
+    }
+    public void ChangeStartTile()
+    {
+        MM.ChangeTile(TrackList[_curTrack].Peek(), MapManager.instance.TileIdx);
     }
 }

@@ -62,9 +62,11 @@ public class TouchSystem : MonoBehaviour {
             touchEvent.IsStart = touchEvent.IsStartTile(touchEvent.GetTilePos());
             if (touchEvent.IsStart)
                 touchEvent.PrevTilePos = touchEvent.GetPrevTilePos();
-        };
+            touchEvent.ChangeStartTile();
+        }; 
         touchEnd += (touches) =>
         {
+            touchEvent.ChangeLastTile();
         };
         touchMove += (touches) =>
         {

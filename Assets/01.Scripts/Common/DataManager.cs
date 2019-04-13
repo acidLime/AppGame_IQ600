@@ -9,10 +9,19 @@ public enum ETileType
     BLOCK,
     SLOW,
     TRAP,
+    OVERLAP,
     VERTICAL,
     HORIZONTAL,
     CURVE,
     LAST
+}
+public enum EDir
+{
+    NONE,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
 }
 public class DataManager : MonoBehaviour
 {
@@ -136,6 +145,8 @@ public class DataManager : MonoBehaviour
             return _trapTileNum;
         }
     }
+    int _overlapTileNum = 0;
+    Vector3Int[] _overlapTilePos;
 
     private void Awake()
     {
@@ -157,14 +168,13 @@ public class DataManager : MonoBehaviour
     void Init()
     {
         _mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
-        Debug.Log(_mapSize);
         _gridSize = 8.8f / _mapSize;
 
         _startTileNum = (int)_tileData[_stageLevel - 1]["startTileNum"];
         _blockTileNum = (int)_tileData[_stageLevel - 1]["blockTileNum"];
         _slowTileNum = (int)_tileData[_stageLevel - 1]["slowTileNum"];
         _trapTileNum = (int)_tileData[_stageLevel - 1]["trapTileNum"];
-
+        _overlapTileNum = (int)_tileData[_stageLevel - 1]["overlapTileNum"];
         //특수타일들의 위치를 탐색함
         FindAndSetSpecialTilePos();
     }
@@ -175,12 +185,14 @@ public class DataManager : MonoBehaviour
         _blockTilePos = new Vector3Int[_blockTileNum];
         _slowTilePos = new Vector3Int[_slowTileNum];
         _trapTilePos = new Vector3Int[_trapTileNum];
+        _overlapTilePos = new Vector3Int[_overlapTileNum];
 
         int dataIdx = 0;
         int startTileNum = 0;
         int blockIdx = 0;
         int slowIdx = 0;
         int trapIdx = 0;
+        int overlapIdx = 0;
 
         while ((int)_tileData[dataIdx]["stage"] == _stageLevel)
         {
@@ -200,6 +212,9 @@ public class DataManager : MonoBehaviour
                     break;
                 case (int)ETileType.TRAP:
                     _trapTilePos[trapIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
+                    break;
+                case (int)ETileType.OVERLAP:
+                    _overlapTilePos[overlapIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
                     break;
                 default:
                     break;

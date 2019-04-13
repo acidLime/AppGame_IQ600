@@ -74,7 +74,7 @@ public class CharacterCtrl : MonoBehaviour
             }
         }
 	}
-    void Init()
+    public void Init()
     {
         _characterNum = DM.StartTileNum;
         _character = new GameObject[_characterNum];
@@ -82,7 +82,7 @@ public class CharacterCtrl : MonoBehaviour
         float gridSize = DM.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
         targetPos = new Vector3[_characterNum];
-        _characterMoveCount = new int[_characterNum];
+       _characterMoveCount = new int[_characterNum];
         _canMove = new bool[_characterNum];
 
         for (int i = 0; i < _characterNum; i++)
@@ -104,8 +104,10 @@ public class CharacterCtrl : MonoBehaviour
     {
         while(_characterMoveTile[characterIdx].Count > 0)
         {
+            
             if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx])
             {
+                Debug.Log("end");
                 break;
             }
             targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];

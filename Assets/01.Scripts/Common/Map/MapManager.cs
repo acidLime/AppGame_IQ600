@@ -9,7 +9,6 @@ public class MapManager : MonoBehaviour {
     public Tilemap backGroundTilemap;
     [SerializeField] TileBase[] tileBase;
     public GameObject grid;
-    public GameObject backGroundGrid;
     DataManager DM;
 
     public static MapManager instance;
@@ -55,6 +54,15 @@ public class MapManager : MonoBehaviour {
         InitMap();
 
     }
+    private void Update()
+    {
+        //if(Input.GetMouseButtonDown(0))
+        //{
+        //    Debug.Log("들어옴");
+        //    
+        //}
+
+    }
     public void InitMap()
     {
         int mapSize = DM.MapSize;
@@ -86,11 +94,11 @@ public class MapManager : MonoBehaviour {
             dataIdx++;
         }
         float gridSize = DM.GridSize;
-        Debug.Log(mapSize);
         grid.transform.localScale = new Vector3(gridSize, gridSize, 1); // 타일 갯수에 따른 맵사이즈 조절
-        backGroundGrid.transform.localScale = new Vector3(gridSize, gridSize, 1);
+        grid.transform.localScale = new Vector3(gridSize, gridSize, 1);
         backGroundTilemap.BoxFill(new Vector3Int(mapSize - 1, mapSize - 1, 0),
             tileBase[(int)ETileType.NORMAL], 0, 0, mapSize, mapSize);//지정범위만큼 타일 채움
+        
     }
     //타일을 지정 타일로 변경해줌
     public void ChangeTile(Vector3Int position, ETileType tileType)
@@ -121,5 +129,27 @@ public class MapManager : MonoBehaviour {
     public void SetTileIdx(int tileIdx)
     {
         _tileIdx = (ETileType)tileIdx;
+    }
+    public void SetCurveTile(Vector3Int tilePos, EDir tileDir)
+    {
+        ChangeTile(tilePos, ETileType.CURVE);
+        float dir = 0.0f;
+        switch (tileDir)
+        {
+            case EDir.UP:
+                dir = 270.0f;
+                break;
+            case EDir.DOWN:
+                dir = 90.0f;
+                break;
+            case EDir.LEFT:
+                dir = 180.0f;
+                break;
+            case EDir.RIGHT:
+                dir = 0.0f;
+                break;
+        }
+        Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, dir));
+        tilemap.SetTransformMatrix(tilePos, matrix);
     }
 }
