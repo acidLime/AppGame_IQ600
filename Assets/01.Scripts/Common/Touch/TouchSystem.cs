@@ -59,9 +59,19 @@ public class TouchSystem : MonoBehaviour {
     {
         touchBegin += (touches) =>
         {
-            touchEvent.IsStart = touchEvent.IsStartTile(touchEvent.GetTilePos());
+            Vector3Int touchPos = touchEvent.GetTilePos();
+            touchEvent.IsStart = touchEvent.IsStartTile(touchPos);
+            if (touchEvent.PrevTouchPos == touchPos && touchEvent.CanDoubleTouch == true)
+            {
+                touchEvent.RemoveTile(touchPos);
+                touchEvent.CanDoubleTouch = false;
+                return;
+            }
             if (touchEvent.IsStart)
                 touchEvent.PrevTilePos = touchEvent.GetPrevTilePos();
+
+            touchEvent.PrevTouchPos = touchPos;
+            touchEvent.CanDoubleTouch = true;
             touchEvent.ChangeStartTile();
         }; 
         touchEnd += (touches) =>
