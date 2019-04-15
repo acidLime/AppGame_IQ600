@@ -113,6 +113,8 @@ public class TouchEvent : MonoBehaviour
     }
     public Vector3Int GetPrevTilePos()
     {
+        if (_trackList[_curTrack].Peek() == _startTilePos[_curTrack])
+            return _trackList[_curTrack].Peek();
         Vector3Int top = _trackList[_curTrack].Pop();
         Vector3Int value;
 
@@ -249,23 +251,50 @@ public class TouchEvent : MonoBehaviour
     //인자로 받은 위치까지 타일 삭제
     public void RemoveTile(Vector3Int removePos)
     {
-        if(removePos == DM.StartTilePos[_curTrack])
+        /*
+        if(removePos == _startTilePos[_curTrack])
         {
-            while(_trackList[_curTrack].Count > 1)
+            while(_trackList[_curTrack].Count > 1 )
                 MM.ChangeTile(_trackList[_curTrack].Pop(), ETileType.NORMAL);
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].Clear();
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(DM.StartTilePos[_curTrack]));
+            return;
         }
+        */
         Vector3Int topTilePos;
         do
         {
+
+            if (_trackList[_curTrack].Peek() == _startTilePos[_curTrack])
+                break;
             topTilePos = _trackList[_curTrack].Pop();
             MM.ChangeTile(topTilePos, ETileType.NORMAL);
         }
         while (topTilePos != removePos);
         int tileIdx = CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count -1;
         do
-            CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(tileIdx);
+        {
+            if (tilemap.WorldToCell(CharacterCtrl.instance.CharacterMoveTile[_curTrack][tileIdx]) == _startTilePos[_curTrack])
+                break;
+            CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(tileIdx--);
+        }
         while (tilemap.WorldToCell(CharacterCtrl.instance.CharacterMoveTile[_curTrack][tileIdx]) != removePos);
+    }
+    public void CheckDoubleTouch(Vector3Int tilePos)
+    {
+        float touchTime = 1.0f;
+        while(touchTime > 0)
+        {
+            Debug.Log(touchTime);
+            touchTime -= Time.deltaTime;
+            if (_prevTouchPos == tilePos)
+            {
+                _canDoubleTouch = true;
+                _prevTouchPos = new Vector3Int(-1, -1, -1);
+
+                break;
+            }
+            _canDoubleTouch = false;
+        }
     }
 }
