@@ -228,6 +228,8 @@ public class TouchEvent : MonoBehaviour
         //타일을 그림
         MM.ChangeTile(tilePos, MM.TileIdx); //좌표 타일을 지정된 타일로 변경
         //그릴 수 없는 타일로 변경
+        Color color = new Color(1.0f, 0.1f, 0.1f, 0.3f);
+        tilemap.SetColor(tilePos, color);
         _canDraw[tilePos.x, tilePos.y] = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
@@ -262,6 +264,7 @@ public class TouchEvent : MonoBehaviour
         }
         */
         Vector3Int topTilePos;
+        int tileIdx = CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count - 1;
         do
         {
 
@@ -269,28 +272,21 @@ public class TouchEvent : MonoBehaviour
                 break;
             topTilePos = _trackList[_curTrack].Pop();
             MM.ChangeTile(topTilePos, ETileType.NORMAL);
-        }
-        while (topTilePos != removePos);
-        int tileIdx = CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count -1;
-        do
-        {
-            if (tilemap.WorldToCell(CharacterCtrl.instance.CharacterMoveTile[_curTrack][tileIdx]) == _startTilePos[_curTrack])
-                break;
+            _canDraw[topTilePos.x, topTilePos.y] = true;
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(tileIdx--);
         }
-        while (tilemap.WorldToCell(CharacterCtrl.instance.CharacterMoveTile[_curTrack][tileIdx]) != removePos);
+        while (topTilePos != removePos);
     }
     public void CheckDoubleTouch(Vector3Int tilePos)
     {
         float touchTime = 1.0f;
         while(touchTime > 0)
         {
-            Debug.Log(touchTime);
             touchTime -= Time.deltaTime;
             if (_prevTouchPos == tilePos)
             {
                 _canDoubleTouch = true;
-                _prevTouchPos = new Vector3Int(-1, -1, -1);
+                _prevTouchPos = new Vector3Int(-1, -1, 0);
 
                 break;
             }

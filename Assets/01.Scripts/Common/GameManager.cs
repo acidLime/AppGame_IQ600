@@ -34,8 +34,12 @@ public class GameManager : MonoBehaviour {
 	}
     public void GameStart(int stageLevel)
     {
+
         Debug.Log("GameStart");
-        
+    }
+    public void GameOver()
+    {
+        Debug.Log("gameover");
     }
     public void EndGame()
     {

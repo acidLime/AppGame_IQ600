@@ -107,6 +107,8 @@ public class CharacterCtrl : MonoBehaviour
             
             if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx])
             {
+                StopAllCoroutines();
+                GameManager.instance.GameOver();
                 Debug.Log("end");
                 break;
             }

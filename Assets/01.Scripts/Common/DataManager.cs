@@ -167,7 +167,8 @@ public class DataManager : MonoBehaviour
     }
     void Init()
     {
-        _mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
+        //_mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
+        _mapSize = 9;
         _gridSize = 8.8f / _mapSize;
 
         _startTileNum = (int)_tileData[_stageLevel - 1]["startTileNum"];
