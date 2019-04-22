@@ -13,6 +13,7 @@ public class TouchEvent : MonoBehaviour
     bool _canDoubleTouch = false;
     public Tilemap tilemap;
     [SerializeField] private Camera _cam; //터치카메라
+    public static TouchEvent instance;
     EDir _prevDir;
     EDir _curDir;
     public bool IsStart
@@ -82,9 +83,18 @@ public class TouchEvent : MonoBehaviour
         }
     }
     int _startTileNum = 0;
-    private void Start()
+    private void Awake()
     {
-        Init();
+        if (instance == null)
+        {
+            //instance는 자기자신으로
+            instance = this;
+        }
+        else if (instance != null)
+        {
+            //instance를 삭제
+            Destroy(gameObject);
+        }
     }
     public void Init()
     {
@@ -180,11 +190,9 @@ public class TouchEvent : MonoBehaviour
     {
         Vector3Int tileDir;
         tileDir = tilePos - prevTile;
-        
         if (tileDir.x > 0)
         {
             MM.SetTileIdx((int)ETileType.HORIZONTAL);
-            //위아래 플립
             _curDir = EDir.RIGHT;
         }
         if (tileDir.x < 0)
@@ -195,16 +203,16 @@ public class TouchEvent : MonoBehaviour
         if (tileDir.y > 0)
         {
             MM.SetTileIdx((int)ETileType.VERTICAL);
-            _curDir = EDir.DOWN;
+            _curDir = EDir.UP;
         }
         if (tileDir.y < 0)
         {
             MM.SetTileIdx((int)ETileType.VERTICAL);
-            _curDir = EDir.UP;
+            _curDir = EDir.DOWN;
         }
         if(_prevDir != _curDir)
         {
-            MM.SetCurveTile(prevTile, _curDir);
+            MM.SetCurveTile(tileDir, prevTile, _curDir);
         }
         _prevDir = _curDir;
     }
@@ -223,14 +231,17 @@ public class TouchEvent : MonoBehaviour
     }
     public void DrawTile(Vector3Int tilePos)
     {
+        if (_trackList[_curTrack].Peek() == DM.EndTilePos)
+            return;
         //타일의 방향을 설정
         SetDirection(_trackList[_curTrack].Peek(), tilePos);
         //타일을 그림
         MM.ChangeTile(tilePos, MM.TileIdx); //좌표 타일을 지정된 타일로 변경
         //그릴 수 없는 타일로 변경
-        Color color = new Color(1.0f, 0.1f, 0.1f, 0.3f);
-        tilemap.SetColor(tilePos, color);
-        _canDraw[tilePos.x, tilePos.y] = false;
+        if(tilePos == DM.EndTilePos || tilePos == DM.OverlapTilePos[0])
+            _canDraw[tilePos.x, tilePos.y] = true;
+        else
+            _canDraw[tilePos.x, tilePos.y] = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
         CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(tilePos));

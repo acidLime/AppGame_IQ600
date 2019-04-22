@@ -12,7 +12,8 @@ public enum ETileType
     OVERLAP,
     VERTICAL,
     HORIZONTAL,
-    CURVE,
+    DOWNCURVE,
+    UPCURVE,
     LAST
 }
 public enum EDir
@@ -147,6 +148,13 @@ public class DataManager : MonoBehaviour
     }
     int _overlapTileNum = 0;
     Vector3Int[] _overlapTilePos;
+    public Vector3Int[] OverlapTilePos
+    {
+        get
+        {
+            return _overlapTilePos;
+        }
+    }
 
     private void Awake()
     {
@@ -163,12 +171,10 @@ public class DataManager : MonoBehaviour
         }
         _tileData = CSVReader.Read("tile");
         Init();
-
     }
-    void Init()
+    public void Init()
     {
-        //_mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
-        _mapSize = 9;
+        _mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
         _gridSize = 8.8f / _mapSize;
 
         _startTileNum = (int)_tileData[_stageLevel - 1]["startTileNum"];

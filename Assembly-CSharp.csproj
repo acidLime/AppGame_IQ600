@@ -61,6 +61,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\01.Scripts\Character\Character.cs" />
+    <Compile Include="Assets\01.Scripts\Character\CharacterCtrl.cs" />
+    <Compile Include="Assets\01.Scripts\Common\CSVReader.cs" />
+    <Compile Include="Assets\01.Scripts\Common\DataManager.cs" />
+    <Compile Include="Assets\01.Scripts\Common\Map\MapManager.cs" />
+    <Compile Include="Assets\01.Scripts\Common\Touch\TouchEvent.cs" />
+    <Compile Include="Assets\01.Scripts\Common\Touch\TouchSystem.cs" />
+    <Compile Include="Assets\01.Scripts\GameManager.cs" />
     <Compile Include="Assets\01.Scripts\UI\UIManager.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/겜준/Desktop/프로젝트/IQ500/AppGame_IQ600/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
@@ -302,24 +310,6 @@
     <Reference Include="Boo.Lang">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.19f1/Editor/Data/MonoBleedingEdge/lib/mono/unity/Boo.Lang.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="CharacterAD.csproj">
-      <Project>{B6A8EFE7-9BAD-72E2-89A5-DE39DB30CF61}</Project>
-      <Name>CharacterAD</Name>
-    </ProjectReference>
-    <ProjectReference Include="TouchAd.csproj">
-      <Project>{3FAC9617-7A20-A564-B7D7-98BF7525FA4D}</Project>
-      <Name>TouchAd</Name>
-    </ProjectReference>
-    <ProjectReference Include="CommonAD.csproj">
-      <Project>{C4BBBADB-22AE-042C-056B-B9ED30EE9655}</Project>
-      <Name>CommonAD</Name>
-    </ProjectReference>
-    <ProjectReference Include="MapAD.csproj">
-      <Project>{9BCC87C5-2392-B8FC-A805-EF5DCADE93F2}</Project>
-      <Name>MapAD</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

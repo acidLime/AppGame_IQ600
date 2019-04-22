@@ -7,6 +7,7 @@ public class MapManager : MonoBehaviour {
 
     public Tilemap tilemap;
     public Tilemap backGroundTilemap;
+    public Tilemap ObjectTilemap;
     [SerializeField] TileBase[] tileBase;
     public GameObject grid;
     DataManager DM;
@@ -50,8 +51,7 @@ public class MapManager : MonoBehaviour {
         }
         DM = DataManager.instance;
         //_tileData = CSVReader.Read("tile");
-
-        InitMap();
+        //InitMap();
 
     }
     public void InitMap()
@@ -79,9 +79,18 @@ public class MapManager : MonoBehaviour {
         int dataIdx = 0;
         while ((int)DM.TileData[dataIdx]["stage"] == DM.StageLevel)
         {
-            tilemap.SetTile(new Vector3Int((int)DM.TileData[dataIdx]["tileX"],
+            if ((int)DM.TileData[dataIdx]["tileType"] == 2)
+            {
+                tilemap.SetTile(new Vector3Int((int)DM.TileData[dataIdx]["tileX"],
                 (int)DM.TileData[dataIdx]["tileY"], 0),
                 tileBase[(int)DM.TileData[dataIdx]["tileType"]]);
+            }
+            else
+            {
+                ObjectTilemap.SetTile(new Vector3Int((int)DM.TileData[dataIdx]["tileX"],
+               (int)DM.TileData[dataIdx]["tileY"], 0),
+               tileBase[(int)DM.TileData[dataIdx]["tileType"]]);
+            }
             dataIdx++;
         }
         float gridSize = DM.GridSize;
@@ -89,6 +98,22 @@ public class MapManager : MonoBehaviour {
         grid.transform.localScale = new Vector3(gridSize, gridSize, 1);
         backGroundTilemap.BoxFill(new Vector3Int(mapSize - 1, mapSize - 1, 0),
             tileBase[(int)ETileType.NORMAL], 0, 0, mapSize, mapSize);//지정범위만큼 타일 채움
+        for(int i = 0; i < mapSize; i++)
+        {
+            for(int j = 0; j < mapSize; j++)
+            {
+                if(i % 2 == 1)
+                {
+                    if(j % 2 == 1)
+                        backGroundTilemap.SetTile(new Vector3Int(i, j, 0), tileBase[6]);
+                }
+                if (i % 2 == 0)
+                {
+                    if (j % 2 == 0)
+                        backGroundTilemap.SetTile(new Vector3Int(i, j, 0), tileBase[6]);
+                }
+            }
+        }
         
     }
     //타일을 지정 타일로 변경해줌
@@ -100,12 +125,7 @@ public class MapManager : MonoBehaviour {
         if (position.x > mapSize - 1 || position.y > mapSize - 1 ||
             position.x < 0 || position.y < 0)
             return;
-        //startTile이면 리턴
-        for(int i = 0; i < DM.StartTileNum; i++)
-        {
-            if (DM.StartTilePos[i] == position)
-                return;
-        }
+        
         //장애물이면 리턴
         for(int i = 0; i < DM.BlockTileNum; i++)
         {
@@ -121,26 +141,63 @@ public class MapManager : MonoBehaviour {
     {
         _tileIdx = (ETileType)tileIdx;
     }
-    public void SetCurveTile(Vector3Int tilePos, EDir tileDir)
+    public void SetCurveTile(Vector3Int direction, Vector3Int prevTilePos, EDir tileDir)
     {
-        ChangeTile(tilePos, ETileType.CURVE);
+        ChangeTile(prevTilePos, ETileType.UPCURVE);
         float dir = 0.0f;
-        switch (tileDir)
-        {
+        switch (tileDir) 
+        { 
             case EDir.UP:
-                dir = 270.0f;
+                if (direction.x > 0)
+                {
+                    dir = 0.0f;
+                    Debug.Log("Up Right");
+                }
+                else
+                {
+                    dir = -90.0f;
+                    Debug.Log("Up left");
+                }
                 break;
             case EDir.DOWN:
-                dir = 90.0f;
-                break;
-            case EDir.LEFT:
-                dir = 180.0f;
-                break;
+                if (direction.x > 0)
+                {
+                    dir = 0.0f;
+                    Debug.Log("down Right");
+                }
+                else
+                {
+                    dir = 0.0f;
+                    Debug.Log("down left");
+                }
+                break; 
             case EDir.RIGHT:
-                dir = 0.0f;
-                break;
-        }
-        Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, dir));
-        tilemap.SetTransformMatrix(tilePos, matrix);
+                if (direction.y > 0)
+                {
+                    dir = 0.0f;
+                    Debug.Log("right up");
+                }
+                else
+                {
+                    dir = 90.0f;
+                    Debug.Log("right Down");
+                }
+                break; 
+            case EDir.LEFT:
+                if (direction.y > 0)
+                {
+                    dir = 0.0f;
+                    Debug.Log("Left up");
+                }
+                else
+                {
+                    dir = -90.0f;
+                    Debug.Log("Left Down");
+                }
+                break; 
+        } 
+        Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, dir)); 
+        tilemap.SetTransformMatrix(prevTilePos, matrix); 
+
     }
 }

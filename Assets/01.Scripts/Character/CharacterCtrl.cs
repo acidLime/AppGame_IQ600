@@ -12,6 +12,7 @@ public enum CharacterDir
 }
 public class CharacterCtrl : MonoBehaviour
 {
+    
     DataManager DM;
     public GridLayout characterTilemap;
     public CharacterDir characterDir;
@@ -59,8 +60,8 @@ public class CharacterCtrl : MonoBehaviour
             Destroy(gameObject);
         }
         DM = DataManager.instance;
-        Init();
         StartCoroutine(CharacterMoveStart());
+        //Init();
     }
 	
 	// Update is called once per frame
@@ -105,14 +106,20 @@ public class CharacterCtrl : MonoBehaviour
         while(_characterMoveTile[characterIdx].Count > 0)
         {
             
-            if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx])
+            if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx] ||
+                (targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count != _characterMoveTile[1].Count - 2))
             {
                 StopAllCoroutines();
                 GameManager.instance.GameOver();
-                Debug.Log("end");
                 break;
             }
             targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
+            if(targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count == _characterMoveTile[1].Count - 2)
+            {
+                StopAllCoroutines();
+                GameManager.instance.EndGame();
+                break;
+            }
             _canMove[characterIdx] = true;
             yield return wait;
         }

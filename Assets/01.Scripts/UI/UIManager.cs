@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour {
 
     public GameObject[] characterInfo;
+    public GameObject gameoverPanel;
+    public GameObject clearPanel;
+    public Sprite[] gameoverImage;
     public Text[] text;
     public static UIManager instance;
 
@@ -40,5 +43,19 @@ public class UIManager : MonoBehaviour {
     public void UpdataCharacterInfo(int characterIdx, int tileCount)
     {
         text[characterIdx].text = "N : " + tileCount;
+    }
+    public void ShowGameOver(int imageIdx)
+    {
+        gameoverPanel.GetComponentInChildren<Image>().sprite = gameoverImage[imageIdx];
+        gameoverPanel.SetActive(true);
+    }
+    public void ShowClearPanel()
+    {
+        clearPanel.SetActive(true);
+    }
+    public void ClosePanel()
+    {
+        clearPanel.SetActive(false);
+        gameoverPanel.SetActive(false);
     }
 }
