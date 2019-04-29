@@ -12,8 +12,7 @@ public enum ETileType
     OVERLAP,
     VERTICAL,
     HORIZONTAL,
-    DOWNCURVE,
-    UPCURVE,
+    CURVE,
     LAST
 }
 public enum EDir
@@ -27,6 +26,7 @@ public enum EDir
 public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
+    MyTile[,] _tiles;
     //맵 크기
     int _mapSize;
     public int MapSize
@@ -65,7 +65,21 @@ public class DataManager : MonoBehaviour
             _stageLevel = value;
         }
     }
-
+    public MyTile[,] Tiles
+    {
+        get
+        {
+            return _tiles;
+        }
+    }
+    int _startTileNum;
+    public int StartTileNum
+    {
+        get
+        {
+            return _startTileNum;
+        }
+    }
     Vector3Int[] _startTilePos;
     public Vector3Int[] StartTilePos
     {
@@ -74,88 +88,6 @@ public class DataManager : MonoBehaviour
             return _startTilePos;
         }
     }
-
-    int _startTileNum = 0;
-    public int StartTileNum
-    {
-        get
-        {
-            return _startTileNum;
-        }
-    }
-
-    Vector3Int _endTilePos;
-    public Vector3Int EndTilePos
-    {
-        get
-        {
-            return _endTilePos;
-        }
-    }
-
-    Vector3Int[] _blockTilePos;
-    public Vector3Int[] BlockTilePos
-    {
-        get
-        {
-            return _blockTilePos;
-        }
-    }
-
-    int _blockTileNum = 0;
-    public int BlockTileNum
-    {
-        get
-        {
-            return _blockTileNum;
-        }
-    }
-
-    Vector3Int[] _slowTilePos;
-    public Vector3Int[] SlowTilePos
-    {
-        get
-        {
-            return _slowTilePos;
-        }
-    }
-
-    int _slowTileNum = 0;
-    public int SlowTileNum
-    {
-        get
-        {
-            return _slowTileNum;
-        }
-    }
-
-    Vector3Int[] _trapTilePos;
-    public Vector3Int[] TrapTilePos
-    {
-        get
-        {
-            return _trapTilePos;
-        }
-    }
-
-    int _trapTileNum = 0;
-    public int TrapTileNum
-    {
-        get
-        {
-            return _trapTileNum;
-        }
-    }
-    int _overlapTileNum = 0;
-    Vector3Int[] _overlapTilePos;
-    public Vector3Int[] OverlapTilePos
-    {
-        get
-        {
-            return _overlapTilePos;
-        }
-    }
-
     private void Awake()
     {
         //instance가 null이면
@@ -176,57 +108,41 @@ public class DataManager : MonoBehaviour
     {
         _mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
         _gridSize = 8.8f / _mapSize;
-
-        _startTileNum = (int)_tileData[_stageLevel - 1]["startTileNum"];
-        _blockTileNum = (int)_tileData[_stageLevel - 1]["blockTileNum"];
-        _slowTileNum = (int)_tileData[_stageLevel - 1]["slowTileNum"];
-        _trapTileNum = (int)_tileData[_stageLevel - 1]["trapTileNum"];
-        _overlapTileNum = (int)_tileData[_stageLevel - 1]["overlapTileNum"];
-        //특수타일들의 위치를 탐색함
-        FindAndSetSpecialTilePos();
-    }
-    //특수한 타일들의 위치값을 저장
-    void FindAndSetSpecialTilePos()
-    {
+        _startTileNum = 2;
+        _tiles = new MyTile[_mapSize, _mapSize];
+        for(int i = 0; i < _mapSize; i++)
+        {
+            for(int j = 0; j < _mapSize; j++)
+            {
+                _tiles[i, j] = GetComponent<MyTile>();
+            }
+        }
         _startTilePos = new Vector3Int[_startTileNum];
-        _blockTilePos = new Vector3Int[_blockTileNum];
-        _slowTilePos = new Vector3Int[_slowTileNum];
-        _trapTilePos = new Vector3Int[_trapTileNum];
-        _overlapTilePos = new Vector3Int[_overlapTileNum];
-
         int dataIdx = 0;
-        int startTileNum = 0;
-        int blockIdx = 0;
-        int slowIdx = 0;
-        int trapIdx = 0;
-        int overlapIdx = 0;
-
         while ((int)_tileData[dataIdx]["stage"] == _stageLevel)
         {
-            switch ((int)_tileData[dataIdx]["tileType"])
-            {
-                case (int)ETileType.START:
-                    _startTilePos[startTileNum++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
-                    break;
-                case (int)ETileType.END:
-                    _endTilePos = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
-                    break;
-                case (int)ETileType.BLOCK:
-                    _blockTilePos[blockIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
-                    break;
-                case (int)ETileType.SLOW:
-                    _slowTilePos[slowIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
-                    break;
-                case (int)ETileType.TRAP:
-                    _trapTilePos[trapIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
-                    break;
-                case (int)ETileType.OVERLAP:
-                    _overlapTilePos[overlapIdx++] = new Vector3Int((int)_tileData[dataIdx]["tileX"], (int)_tileData[dataIdx]["tileY"], 0);
-                    break;
-                default:
-                    break;
-            }
+            int x = (int)_tileData[dataIdx]["tileX"];
+            int y = (int)_tileData[dataIdx]["tileY"];
+            Debug.Log((ETileType)(int)_tileData[dataIdx]["tileType"]);
+            _tiles[x, y].tilePos = new Vector3Int(x, y, 0);
+            _tiles[x, y].type = (ETileType)(int)_tileData[dataIdx]["tileType"];
             dataIdx++;
+        }
+        FindTile();
+
+    }
+    public void FindTile()
+    {
+        int i;
+        int j;
+        int dataIdx = 0;
+        for (i = 0; i < MapSize; i++)
+        {
+            for (j = 0; j < MapSize; j++)
+            {
+                if (Tiles[i, j].type == ETileType.START)
+                    _startTilePos[dataIdx++] = Tiles[i,j].tilePos;
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ public class TouchEvent : MonoBehaviour
             _isStart = value;
         }
     }
-    bool[,] _canDraw;
+   // bool[,] _canDraw;
     int mapSize = 0;
     List<Stack<Vector3Int>> _trackList;
     public List<Stack<Vector3Int>> TrackList
@@ -102,13 +102,8 @@ public class TouchEvent : MonoBehaviour
         MM = MapManager.instance;
         DM = DataManager.instance;
         _trackList = new List<Stack<Vector3Int>>();
-        _startTileNum = DM.StartTileNum;
 
-        _startTilePos = new Vector3Int[_startTileNum];
-        _startTilePos = DM.StartTilePos;
 
-        _canDraw = new bool[DM.MapSize, DM.MapSize];
-        _canDraw = MM.CanDraw;
 
         mapSize = DM.MapSize;
 
@@ -150,23 +145,21 @@ public class TouchEvent : MonoBehaviour
             return false;
         }
 
-        if (!_canDraw[tilePos.x, tilePos.y])
+        if (!DM.Tiles[tilePos.x, tilePos.y].canDraw)
         {
             if (GetPrevTilePos() != tilePos)
                 return false;
 
             int i = 0;
             //장애물이라면 리턴
-            for (i = 0; i < DM.BlockTileNum; i++)
-            {
-                if (DM.BlockTilePos[i] == tilePos)
+            
+            if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.BLOCK)
                     return false;
-            }
             Vector3Int stackTop = _trackList[_curTrack].Pop();
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count - 1);
             MM.ChangeTile(stackTop, ETileType.NORMAL); //좌표 타일을 지정된 타일로 변경
             //그릴 수 있는 타일로 변경
-            _canDraw[stackTop.x, stackTop.y] = true;
+            DM.Tiles[stackTop.x, stackTop.y].canDraw = true;
             return false;
         }
 
@@ -212,7 +205,7 @@ public class TouchEvent : MonoBehaviour
         }
         if(_prevDir != _curDir)
         {
-            MM.SetCurveTile(tileDir, prevTile, _curDir);
+            MM.SetCurveTile(prevTile, _prevDir, _curDir);
         }
         _prevDir = _curDir;
     }
@@ -231,17 +224,17 @@ public class TouchEvent : MonoBehaviour
     }
     public void DrawTile(Vector3Int tilePos)
     {
-        if (_trackList[_curTrack].Peek() == DM.EndTilePos)
+        if (DM.Tiles[_trackList[_curTrack].Peek().x,_trackList[_curTrack].Peek().y].type == ETileType.END)
             return;
         //타일의 방향을 설정
         SetDirection(_trackList[_curTrack].Peek(), tilePos);
         //타일을 그림
         MM.ChangeTile(tilePos, MM.TileIdx); //좌표 타일을 지정된 타일로 변경
         //그릴 수 없는 타일로 변경
-        if(tilePos == DM.EndTilePos || tilePos == DM.OverlapTilePos[0])
-            _canDraw[tilePos.x, tilePos.y] = true;
+        if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END || DM.Tiles[tilePos.x, tilePos.y].type == ETileType.OVERLAP)
+            DM.Tiles[tilePos.x, tilePos.y].canDraw = true;
         else
-            _canDraw[tilePos.x, tilePos.y] = false;
+            DM.Tiles[tilePos.x, tilePos.y].canDraw = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
         CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(tilePos));
@@ -283,7 +276,8 @@ public class TouchEvent : MonoBehaviour
                 break;
             topTilePos = _trackList[_curTrack].Pop();
             MM.ChangeTile(topTilePos, ETileType.NORMAL);
-            _canDraw[topTilePos.x, topTilePos.y] = true;
+
+            DM.Tiles[topTilePos.x, topTilePos.y].canDraw = true;
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(tileIdx--);
         }
         while (topTilePos != removePos);
@@ -294,7 +288,7 @@ public class TouchEvent : MonoBehaviour
         while(touchTime > 0)
         {
             touchTime -= Time.deltaTime;
-            if (_prevTouchPos == tilePos)
+            if (_prevTouchPos == tilePos && _trackList[_curTrack].Contains(tilePos))
             {
                 _canDoubleTouch = true;
                 _prevTouchPos = new Vector3Int(-1, -1, 0);

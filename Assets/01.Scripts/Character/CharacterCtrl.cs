@@ -106,20 +106,19 @@ public class CharacterCtrl : MonoBehaviour
         while(_characterMoveTile[characterIdx].Count > 0)
         {
             
-            if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx] ||
-                (targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count != _characterMoveTile[1].Count - 2))
+            if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx])
             {
                 StopAllCoroutines();
                 GameManager.instance.GameOver();
                 break;
             }
             targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
-            if(targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count == _characterMoveTile[1].Count - 2)
-            {
-                StopAllCoroutines();
-                GameManager.instance.EndGame();
-                break;
-            }
+            //if(targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count == _characterMoveTile[1].Count - 2)
+            //{
+            //    StopAllCoroutines();
+            //    GameManager.instance.EndGame();
+            //    break;
+           // }
             _canMove[characterIdx] = true;
             yield return wait;
         }

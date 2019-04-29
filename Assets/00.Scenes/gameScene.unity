@@ -2108,6 +2108,7 @@ GameObject:
   - component: {fileID: 1371812609}
   - component: {fileID: 1371812610}
   - component: {fileID: 1371812608}
+  - component: {fileID: 1371812611}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -2164,9 +2165,23 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1bcab731ea78b664ba045b71ea03501e, type: 2}
   - {fileID: 11400000, guid: ac8dec3f4cd685f4181587ddeab3ae5b, type: 2}
   - {fileID: 11400000, guid: 5f3efe865c047e54e8761d1d35879416, type: 2}
-  - {fileID: 11400000, guid: 291aa4513819001499316b63b7c5116d, type: 2}
   - {fileID: 11400000, guid: 48bb5ebeb54ca194fa7850fde21f4585, type: 2}
   grid: {fileID: 543916378}
+--- !u!114 &1371812611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1371812607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04ccf499eb517984aa70408539e5d0f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilePos: {x: 0, y: 0, z: 0}
+  dir: 0
+  type: 0
+  canDraw: 1
 --- !u!1 &1412299228
 GameObject:
   m_ObjectHideFlags: 0

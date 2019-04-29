@@ -27,14 +27,14 @@ public class MapManager : MonoBehaviour {
         }
     }
 
-    bool[,] _canDraw;
-    public bool[,] CanDraw
-    {
-        get
-        {
-            return _canDraw;
-        }
-    }
+    //bool[,] _canDraw;
+    //public bool[,] CanDraw
+    //{
+    //    get
+    //    {
+    //        return _canDraw;
+    //    }
+    //}
 
     private void Awake()
     {
@@ -51,48 +51,27 @@ public class MapManager : MonoBehaviour {
         }
         DM = DataManager.instance;
         //_tileData = CSVReader.Read("tile");
-        //InitMap();
+        InitMap();
 
     }
     public void InitMap()
     {
         int mapSize = DM.MapSize;
-        //맵 사이즈가 최소맵 사이즈보다 작으면 최소사이즈로 변경
-        _canDraw = new bool[mapSize, mapSize];
-        for (int i = 0; i < mapSize; i++)
+
+        for (int i = 0; i <mapSize; i++)
         {
             for(int j = 0; j < mapSize; j++)
             {
-                _canDraw[i,j] = true;
+                //Debug.Log(DM.Tiles[i, j].type);
+
+                if (DM.Tiles[i, j].type == ETileType.START && DM.Tiles[i, j].type == ETileType.BLOCK)
+                    DM.Tiles[i, j].canDraw = false;
+                if (DM.Tiles[i, j].type == ETileType.NORMAL)
+                    continue;
+                ObjectTilemap.SetTile(DM.Tiles[i, j].tilePos, tileBase[(int)DM.Tiles[i, j].type]);
             }
         }
-        Vector3Int[] StartTilePos = DM.StartTilePos;
-        for (int i = 0; i < DM.StartTileNum; i++)
-        {
-            _canDraw[StartTilePos[i].x, StartTilePos[i].y] = false;
-        }
-        Vector3Int[] BlockTilePos = DM.BlockTilePos;
-        for(int i = 0; i < DM.BlockTileNum; i++)
-        {
-            _canDraw[BlockTilePos[i].x, BlockTilePos[i].y] = false;
-        }
-        int dataIdx = 0;
-        while ((int)DM.TileData[dataIdx]["stage"] == DM.StageLevel)
-        {
-            if ((int)DM.TileData[dataIdx]["tileType"] == 2)
-            {
-                tilemap.SetTile(new Vector3Int((int)DM.TileData[dataIdx]["tileX"],
-                (int)DM.TileData[dataIdx]["tileY"], 0),
-                tileBase[(int)DM.TileData[dataIdx]["tileType"]]);
-            }
-            else
-            {
-                ObjectTilemap.SetTile(new Vector3Int((int)DM.TileData[dataIdx]["tileX"],
-               (int)DM.TileData[dataIdx]["tileY"], 0),
-               tileBase[(int)DM.TileData[dataIdx]["tileType"]]);
-            }
-            dataIdx++;
-        }
+        
         float gridSize = DM.GridSize;
         grid.transform.localScale = new Vector3(gridSize, gridSize, 1); // 타일 갯수에 따른 맵사이즈 조절
         grid.transform.localScale = new Vector3(gridSize, gridSize, 1);
@@ -125,15 +104,10 @@ public class MapManager : MonoBehaviour {
         if (position.x > mapSize - 1 || position.y > mapSize - 1 ||
             position.x < 0 || position.y < 0)
             return;
-        
+
         //장애물이면 리턴
-        for(int i = 0; i < DM.BlockTileNum; i++)
-        {
-            if (position == DM.BlockTilePos[i])
-                return;
-        }
-        //도착타일이면 리턴
-        if (position == DM.EndTilePos)
+        if (DM.Tiles[position.x, position.y].type == ETileType.BLOCK ||
+            DM.Tiles[position.x, position.y].type == ETileType.END)
             return;
         tilemap.SetTile(position, tileBase[(int)tileType]);
     }
@@ -141,57 +115,57 @@ public class MapManager : MonoBehaviour {
     {
         _tileIdx = (ETileType)tileIdx;
     }
-    public void SetCurveTile(Vector3Int direction, Vector3Int prevTilePos, EDir tileDir)
+    public void SetCurveTile(Vector3Int prevTilePos, EDir prevDir, EDir curDir)
     {
-        ChangeTile(prevTilePos, ETileType.UPCURVE);
+        ChangeTile(prevTilePos, ETileType.CURVE);
         float dir = 0.0f;
-        switch (tileDir) 
+        switch (curDir) 
         { 
             case EDir.UP:
-                if (direction.x > 0)
+                if (prevDir == EDir.RIGHT)
                 {
-                    dir = 0.0f;
+                    dir = 180.0f;
                     Debug.Log("Up Right");
                 }
-                else
+                else if(prevDir == EDir.LEFT)
                 {
                     dir = -90.0f;
                     Debug.Log("Up left");
                 }
                 break;
             case EDir.DOWN:
-                if (direction.x > 0)
+                if (prevDir == EDir.RIGHT)
                 {
-                    dir = 0.0f;
+                    dir = -90.0f;
                     Debug.Log("down Right");
                 }
-                else
+                else if(prevDir == EDir.LEFT)
                 {
                     dir = 0.0f;
                     Debug.Log("down left");
                 }
                 break; 
             case EDir.RIGHT:
-                if (direction.y > 0)
+                if (prevDir == EDir.UP)
                 {
                     dir = 0.0f;
                     Debug.Log("right up");
                 }
-                else
+                else if(prevDir == EDir.DOWN)
                 {
                     dir = 90.0f;
                     Debug.Log("right Down");
                 }
                 break; 
             case EDir.LEFT:
-                if (direction.y > 0)
+                if (prevDir == EDir.UP)
                 {
-                    dir = 0.0f;
+                    dir = 270.0f;
                     Debug.Log("Left up");
                 }
-                else
+                else if(prevDir == EDir.DOWN)
                 {
-                    dir = -90.0f;
+                    dir = 180.0f;
                     Debug.Log("Left Down");
                 }
                 break; 
