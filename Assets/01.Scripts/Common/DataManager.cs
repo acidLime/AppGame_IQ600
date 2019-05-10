@@ -10,11 +10,18 @@ public enum ETileType
     SLOW,
     TRAP,
     OVERLAP,
+    NORMAL2,
+   
+}
+public enum ERoad
+{
     VERTICAL,
     HORIZONTAL,
     CURVE,
-    LAST
+    LAST,
+    OVERLAP
 }
+
 public enum EDir
 {
     NONE,
@@ -88,6 +95,7 @@ public class DataManager : MonoBehaviour
             return _startTilePos;
         }
     }
+    public Vector3Int _trapTilePos;
     private void Awake()
     {
         //instance가 null이면
@@ -102,7 +110,6 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
         }
         _tileData = CSVReader.Read("tile");
-        Init();
     }
     public void Init()
     {
@@ -114,22 +121,27 @@ public class DataManager : MonoBehaviour
         {
             for(int j = 0; j < _mapSize; j++)
             {
-                _tiles[i, j] = GetComponent<MyTile>();
+                _tiles[i, j] = new MyTile();
             }
         }
         _startTilePos = new Vector3Int[_startTileNum];
         int dataIdx = 0;
+        int x = 0;
+        int y = 0;
         while ((int)_tileData[dataIdx]["stage"] == _stageLevel)
         {
-            int x = (int)_tileData[dataIdx]["tileX"];
-            int y = (int)_tileData[dataIdx]["tileY"];
-            Debug.Log((ETileType)(int)_tileData[dataIdx]["tileType"]);
+            x = (int)_tileData[dataIdx]["tileX"];
+            y = (int)_tileData[dataIdx]["tileY"];
+
             _tiles[x, y].tilePos = new Vector3Int(x, y, 0);
             _tiles[x, y].type = (ETileType)(int)_tileData[dataIdx]["tileType"];
+            _tiles[x, y].canDraw = true;
             dataIdx++;
-        }
-        FindTile();
 
+        }
+
+        FindTile();
+        Debug.Log(_startTileNum);
     }
     public void FindTile()
     {
@@ -142,6 +154,8 @@ public class DataManager : MonoBehaviour
             {
                 if (Tiles[i, j].type == ETileType.START)
                     _startTilePos[dataIdx++] = Tiles[i,j].tilePos;
+                if (Tiles[i, j].type == ETileType.TRAP)
+                    _trapTilePos = Tiles[i, j].tilePos;
             }
         }
     }

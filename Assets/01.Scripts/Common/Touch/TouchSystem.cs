@@ -61,7 +61,9 @@ public class TouchSystem : MonoBehaviour {
         {
             Vector3Int touchPos = touchEvent.GetTilePos();
             touchEvent.IsStart = touchEvent.IsStartTile(touchPos);
+            touchEvent.FindCurTrack(touchPos);
             touchEvent.CheckDoubleTouch(touchPos);
+            Debug.Log(touchPos);
             if (touchEvent.CanDoubleTouch == true)
             {
                 touchEvent.RemoveTile(touchPos);
@@ -73,17 +75,23 @@ public class TouchSystem : MonoBehaviour {
 
             touchEvent.PrevTouchPos = touchPos;
             touchEvent.ChangeStartTile();
+            touchEvent.curSlideQueue.Enqueue(touchPos);
+
         }; 
         touchEnd += (touches) =>
         {
             touchEvent.ChangeLastTile();
+            touchEvent.ChangeTileColor();
         };
         touchMove += (touches) =>
         {
             Vector3Int slidePos = touchEvent.GetTilePos();
             if (!touchEvent.CanTouchProc(slidePos) || !touchEvent.CanTileDraw(slidePos))
                 return;
+            Debug.Log(slidePos);
+
             touchEvent.DrawTile(slidePos);
+
         };
     }
 }

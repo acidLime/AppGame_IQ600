@@ -14,8 +14,6 @@ public class TouchEvent : MonoBehaviour
     public Tilemap tilemap;
     [SerializeField] private Camera _cam; //터치카메라
     public static TouchEvent instance;
-    EDir _prevDir;
-    EDir _curDir;
     public bool IsStart
     {
         get
@@ -27,6 +25,7 @@ public class TouchEvent : MonoBehaviour
             _isStart = value;
         }
     }
+    public Queue<Vector3Int> curSlideQueue;
    // bool[,] _canDraw;
     int mapSize = 0;
     List<Stack<Vector3Int>> _trackList;
@@ -46,7 +45,6 @@ public class TouchEvent : MonoBehaviour
         }
     }
 
-    Vector3Int[] _startTilePos;
     Vector3Int _prevTouchPos;
     public Vector3Int PrevTouchPos
     {
@@ -82,7 +80,6 @@ public class TouchEvent : MonoBehaviour
             _canDoubleTouch = value;
         }
     }
-    int _startTileNum = 0;
     private void Awake()
     {
         if (instance == null)
@@ -102,29 +99,27 @@ public class TouchEvent : MonoBehaviour
         MM = MapManager.instance;
         DM = DataManager.instance;
         _trackList = new List<Stack<Vector3Int>>();
-
-
+        curSlideQueue = new Queue<Vector3Int>();
 
         mapSize = DM.MapSize;
 
-        _curDir = EDir.NONE;
-        _prevDir = EDir.NONE;
-        for (int i = 0; i < _startTileNum; i++)
+        for (int i = 0; i < DM.StartTileNum; i++)
         {
+            Debug.Log(DM.StartTilePos[i]);
             _trackList.Add(new Stack<Vector3Int>());
-            _trackList[i].Push(_startTilePos[i]);
+            _trackList[i].Push(DM.StartTilePos[i]);
 
         }
     }
     public Vector3Int GetPrevTilePos()
     {
-        if (_trackList[_curTrack].Peek() == _startTilePos[_curTrack])
+        if (_trackList[_curTrack].Peek() == DM.StartTilePos[_curTrack])
             return _trackList[_curTrack].Peek();
         Vector3Int top = _trackList[_curTrack].Pop();
         Vector3Int value;
 
         if (_trackList[_curTrack].Count == 0)
-            value = _startTilePos[_curTrack];
+            value = DM.StartTilePos[_curTrack];
         else
             value = _trackList[_curTrack].Peek();
 
@@ -137,7 +132,7 @@ public class TouchEvent : MonoBehaviour
         //시작타일이 아니라면 리턴
         if (!_isStart)
             return false;
-        if (tilePos == _startTilePos[_curTrack]) return false;
+        if (tilePos == DM.StartTilePos[_curTrack]) return false;
 
         if (tilePos.x >= mapSize || tilePos.y >= mapSize ||
             tilePos.x < 0 || tilePos.y < 0)
@@ -152,7 +147,6 @@ public class TouchEvent : MonoBehaviour
 
             int i = 0;
             //장애물이라면 리턴
-            
             if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.BLOCK)
                     return false;
             Vector3Int stackTop = _trackList[_curTrack].Pop();
@@ -167,7 +161,7 @@ public class TouchEvent : MonoBehaviour
     }
     public bool IsStartTile(Vector3Int tilePos)
     {
-        for (int i = 0; i < _startTileNum; i++)
+        for (int i = 0; i < DM.StartTileNum; i++)
         {
             //타일 좌표가 마지막 타일과 같다면
             if (tilePos == _trackList[i].Peek())
@@ -179,35 +173,34 @@ public class TouchEvent : MonoBehaviour
         return false;
     }
     //방향에 따른 타일설정
-    void SetDirection(Vector3Int prevTile, Vector3Int tilePos)
+    void SetDirection(Vector3Int prevPos, Vector3Int tilePos)
     {
         Vector3Int tileDir;
-        tileDir = tilePos - prevTile;
+        tileDir = tilePos - prevPos;
         if (tileDir.x > 0)
         {
-            MM.SetTileIdx((int)ETileType.HORIZONTAL);
-            _curDir = EDir.RIGHT;
+            MM.SetTileIdx((int)ERoad.HORIZONTAL);
+            DM.Tiles[tilePos.x, tilePos.y].dir = EDir.RIGHT;
         }
         if (tileDir.x < 0)
         {
-            MM.SetTileIdx((int)ETileType.HORIZONTAL);
-            _curDir = EDir.LEFT;
+            MM.SetTileIdx((int)ERoad.HORIZONTAL);
+            DM.Tiles[tilePos.x, tilePos.y].dir = EDir.LEFT;
         }
         if (tileDir.y > 0)
         {
-            MM.SetTileIdx((int)ETileType.VERTICAL);
-            _curDir = EDir.UP;
+            MM.SetTileIdx((int)ERoad.VERTICAL);
+            DM.Tiles[tilePos.x, tilePos.y].dir = EDir.UP;
         }
         if (tileDir.y < 0)
         {
-            MM.SetTileIdx((int)ETileType.VERTICAL);
-            _curDir = EDir.DOWN;
+            MM.SetTileIdx((int)ERoad.VERTICAL);
+            DM.Tiles[tilePos.x, tilePos.y].dir = EDir.DOWN;
         }
-        if(_prevDir != _curDir)
+        if(DM.Tiles[tilePos.x,tilePos.y].dir != DM.Tiles[prevPos.x, prevPos.y].dir)
         {
-            MM.SetCurveTile(prevTile, _prevDir, _curDir);
+            MM.SetCurveTile(prevPos, DM.Tiles[prevPos.x, prevPos.y].dir, DM.Tiles[tilePos.x, tilePos.y].dir);
         }
-        _prevDir = _curDir;
     }
     public bool CanTileDraw(Vector3Int tilePos)
     {
@@ -230,15 +223,25 @@ public class TouchEvent : MonoBehaviour
         SetDirection(_trackList[_curTrack].Peek(), tilePos);
         //타일을 그림
         MM.ChangeTile(tilePos, MM.TileIdx); //좌표 타일을 지정된 타일로 변경
-        //그릴 수 없는 타일로 변경
-        if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END || DM.Tiles[tilePos.x, tilePos.y].type == ETileType.OVERLAP)
+        MM.tilemap.SetTileFlags(tilePos, TileFlags.None);
+        MM.tilemap.SetColor(tilePos, new Color(1, 0, 0, 0.3f));
+        if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
             DM.Tiles[tilePos.x, tilePos.y].canDraw = true;
+        else if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.OVERLAP)
+        {
+            DM.Tiles[tilePos.x, tilePos.y].canDraw = true;
+            MM.ChangeTile(tilePos, ERoad.OVERLAP); //좌표 타일을 지정된 타일로 변경
+        }
+        //그릴 수 없는 타일로 변경
         else
             DM.Tiles[tilePos.x, tilePos.y].canDraw = false;
         //현재 좌표를 현재 트랙 스택에 푸시
         _trackList[_curTrack].Push(tilePos);
         CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(tilePos));
+        if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.SLOW)
+            CharacterCtrl.instance.CharacterMoveTile[_curTrack].Add(tilemap.CellToWorld(tilePos));
         UI.UpdataCharacterInfo(_curTrack, CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count);
+        curSlideQueue.Enqueue(tilePos);
     }
     public Vector3Int GetTilePos()
     {
@@ -248,7 +251,23 @@ public class TouchEvent : MonoBehaviour
     }
     public void ChangeLastTile()
     {
-        MM.ChangeTile(TrackList[_curTrack].Peek(), ETileType.LAST);
+        Vector3Int tilePos = new Vector3Int(TrackList[_curTrack].Peek().x, TrackList[_curTrack].Peek().y, 0);
+        MM.ChangeTile(tilePos, ERoad.LAST);
+        float rot = 0.0f;
+        switch(DM.Tiles[tilePos.x, tilePos.y].dir)
+        {
+            case EDir.UP:
+                rot = 180.0f;
+                break;
+            case EDir.LEFT:
+                rot = 270.0f;
+                break;
+            case EDir.RIGHT:
+                rot = 90.0f;
+                break;
+        }
+        Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, rot));
+        tilemap.SetTransformMatrix(tilePos, matrix);
     }
     public void ChangeStartTile()
     {
@@ -271,12 +290,11 @@ public class TouchEvent : MonoBehaviour
         int tileIdx = CharacterCtrl.instance.CharacterMoveTile[_curTrack].Count - 1;
         do
         {
-
-            if (_trackList[_curTrack].Peek() == _startTilePos[_curTrack])
+            if (_trackList[_curTrack].Peek() == DM.StartTilePos[_curTrack])
                 break;
             topTilePos = _trackList[_curTrack].Pop();
-            MM.ChangeTile(topTilePos, ETileType.NORMAL);
 
+            MM.tilemap.SetTile(topTilePos, null);
             DM.Tiles[topTilePos.x, topTilePos.y].canDraw = true;
             CharacterCtrl.instance.CharacterMoveTile[_curTrack].RemoveAt(tileIdx--);
         }
@@ -296,6 +314,27 @@ public class TouchEvent : MonoBehaviour
                 break;
             }
             _canDoubleTouch = false;
+        }
+    }
+    public void FindCurTrack(Vector3Int tilePos)
+    {
+        for(int i = 0; i < DM.StartTileNum; i++)
+        {
+            if(_trackList[i].Contains(tilePos))
+            {
+                _curTrack = i;
+                return;
+            }
+        }
+    }
+    public void ChangeTileColor()
+    {
+        Vector3Int tilePos = new Vector3Int(0, 0, 0);
+        while(curSlideQueue.Count > 0)
+        {
+            tilePos = curSlideQueue.Dequeue();
+            MM.tilemap.SetTileFlags(tilePos, TileFlags.None);
+            MM.tilemap.SetColor(tilePos, new Color(1, 1, 1, 1));
         }
     }
 }

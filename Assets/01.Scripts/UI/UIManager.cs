@@ -12,6 +12,10 @@ public class UIManager : MonoBehaviour {
     public Text[] text;
     public static UIManager instance;
 
+    public GameObject[] timer;
+    public Text[] timeText;
+    public GameObject[] trapPanel;
+
     // Use this for initialization
     void Start ()
     {
@@ -27,10 +31,12 @@ public class UIManager : MonoBehaviour {
             Destroy(gameObject);
         }
         ShowCharacterInfo(2);
+        ShowTrapCount(1);
+
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
     public void ShowCharacterInfo(int characterIdx)
@@ -46,7 +52,6 @@ public class UIManager : MonoBehaviour {
     }
     public void ShowGameOver(int imageIdx)
     {
-        gameoverPanel.GetComponentInChildren<Image>().sprite = gameoverImage[imageIdx];
         gameoverPanel.SetActive(true);
     }
     public void ShowClearPanel()
@@ -57,5 +62,22 @@ public class UIManager : MonoBehaviour {
     {
         clearPanel.SetActive(false);
         gameoverPanel.SetActive(false);
+    }
+    public void TimeCounter()
+    {
+        //if(time[characterIdx] > 0)
+        //{
+        //    time[characterIdx] -= Time.deltaTime;
+        //    timer[characterIdx].SetActive(false);
+
+        //}
+        //timeText[characterIdx].text = Mathf.CeilToInt(time[characterIdx]).ToString();
+    }
+    public void ShowTrapCount(int trapNum)
+    {
+        for(int i = 0; i < trapNum; i++)
+        {
+            trapPanel[i].SetActive(true);
+        }
     }
 }
