@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour {
 
     public GameObject[] timer;
     public Text[] timeText;
+    float[] times;
     public GameObject[] trapPanel;
 
     // Use this for initialization
@@ -32,13 +33,20 @@ public class UIManager : MonoBehaviour {
         }
         ShowCharacterInfo(2);
         ShowTrapCount(1);
-
+        times = new float[2];
+        times[0] = 10.0f;
+        times[1] = 6.0f;
+        for(int i = 0; i < DataManager.instance.StartTileNum; i++)
+        {
+            timer[i].transform.position = Camera.main.ScreenToWorldPoint(MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]));
+        }
     }
 
     // Update is called once per frame
     void Update () {
-		
-	}
+        TimeCounter();
+
+    }
     public void ShowCharacterInfo(int characterIdx)
     {
         for(int i = 0; i < characterIdx; i++)
@@ -48,7 +56,7 @@ public class UIManager : MonoBehaviour {
     }
     public void UpdataCharacterInfo(int characterIdx, int tileCount)
     {
-        text[characterIdx].text = "N : " + tileCount;
+        text[characterIdx].text = tileCount.ToString();
     }
     public void ShowGameOver(int imageIdx)
     {
@@ -65,13 +73,17 @@ public class UIManager : MonoBehaviour {
     }
     public void TimeCounter()
     {
-        //if(time[characterIdx] > 0)
-        //{
-        //    time[characterIdx] -= Time.deltaTime;
-        //    timer[characterIdx].SetActive(false);
+        for(int i = 0; i < DataManager.instance.StartTileNum; i++)
+        {
+            if(times[i] > 0)
+                times[i] -= Time.deltaTime;
+            else
+            {
+                timer[i].SetActive(false);
+            }
+            timeText[i].text = Mathf.Ceil(times[i]).ToString();
+        }
 
-        //}
-        //timeText[characterIdx].text = Mathf.CeilToInt(time[characterIdx]).ToString();
     }
     public void ShowTrapCount(int trapNum)
     {
