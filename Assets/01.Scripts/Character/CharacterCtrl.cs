@@ -12,8 +12,8 @@ public enum CharacterDir
 }
 public class CharacterCtrl : MonoBehaviour
 {
-    
     DataManager DM;
+    public Animator[] anim;
     public GridLayout characterTilemap;
     public CharacterDir characterDir;
     public static CharacterCtrl instance;
@@ -84,6 +84,8 @@ public class CharacterCtrl : MonoBehaviour
         moveWait = new WaitForSeconds(moveTime);
         startTime = moveTime * n;
         startWait = new WaitForSeconds(startTime);
+        anim = new Animator[_characterNum];
+        
         float gridSize = DM.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
         targetPos = new Vector3[_characterNum];
@@ -95,10 +97,12 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile.Add(new List<Vector3>());
             Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
+            Debug.Log("em");
             _character[i] = Instantiate(characterPrefab, _characterMoveTile[i][0], Quaternion.identity);
 
             _character[i].SetActive(true);
             _character[i].transform.localScale = new Vector3(gridSize, gridSize, 1);
+            anim[i] = _character[i].GetComponentInChildren<Animator>();
             //_character[i].transform.position = _characterMoveTile[i][0];
             _characterMoveCount[i] = 0;
             _canMove[i] = false;
@@ -127,6 +131,7 @@ public class CharacterCtrl : MonoBehaviour
                 bool[] clear = new bool[_characterNum];
                 for(int i = 0; i < _characterNum; i++)
                 {
+                    clear[i] = false;
                     if(TouchEvent.instance.TrackList[i].Contains(DM._trapTilePos))
                     {
                         
@@ -159,11 +164,19 @@ public class CharacterCtrl : MonoBehaviour
     }
     void Move(int characterIdx)
     {
+        Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(targetPos[characterIdx]);
+        SetAnimation(characterIdx, DM.Tiles[tilePos.x, tilePos.y].dir);
         Vector3 diff = _character[characterIdx].transform.position - targetPos[characterIdx];
+        
         _character[characterIdx].transform.position = Vector3.MoveTowards(_character[characterIdx].transform.position,
             targetPos[characterIdx], 1.0f * Time.deltaTime);
+
         if (diff.sqrMagnitude < 0.01f * 0.01f)
             _canMove[characterIdx] = false;
     }
-    
+    public void SetAnimation(int characterIdx, EDir dir)
+    {
+        Debug.Log((int)dir);
+        anim[characterIdx].SetInteger("CharacterDir", (int)dir);
+    }
 }

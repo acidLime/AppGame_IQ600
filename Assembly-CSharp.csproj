@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\01.Scripts\Character\Character.cs" />
     <Compile Include="Assets\01.Scripts\Character\CharacterCtrl.cs" />
+    <Compile Include="Assets\01.Scripts\Common\AnimationManager.cs" />
     <Compile Include="Assets\01.Scripts\Common\CSVReader.cs" />
     <Compile Include="Assets\01.Scripts\Common\DataManager.cs" />
     <Compile Include="Assets\01.Scripts\Common\Map\MapManager.cs" />
