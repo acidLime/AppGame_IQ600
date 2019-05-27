@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 
 public class StageTouchSystem : MonoBehaviour {
 
@@ -15,13 +14,9 @@ public class StageTouchSystem : MonoBehaviour {
     event listener touchEnd;
 
     StageTouchEvent touchEvent;
-    Vector3 touchPos;
 
-    public GameObject map;
 
     public float Speed;
-    public Vector2 nowPos, prePos;
-    public Vector3 movePos;
 
     // Use this for initialization
     void Start()
@@ -65,16 +60,6 @@ public class StageTouchSystem : MonoBehaviour {
     {
         touchBegin += (touches) =>
         {
-            Ray r = touchEvent.GetRay();
-            touchPos = touchEvent.GetTouchPos();
-            RaycastHit hit;
-            if (Physics.Raycast(r, out hit, Mathf.Infinity))
-            {
-                if (hit.collider.CompareTag("STAGESELECT"))
-                {
-                    SceneManager.LoadScene("GameScene");
-                }
-            }
                 
         };
         touchEnd += (touches) =>
@@ -82,19 +67,6 @@ public class StageTouchSystem : MonoBehaviour {
         };
         touchMove += (touches) =>
         {
-            if (map.transform.position.x > 0f)
-            {
-                map.transform.position = new Vector3(0f, map.transform.position.y, map.transform.position.z); return;
-            }
-            if (map.transform.position.x < -11.6f)
-            {
-                map.transform.position = new Vector3(-11.6f, map.transform.position.y, map.transform.position.z); return;
-            }
-            Vector3 curPos = touchEvent.GetTouchPos();
-            nowPos.x = curPos.x - touchPos.x;
-            movePos = (Vector3)(prePos - nowPos) * Speed;
-            map.transform.Translate(movePos);
-            prePos = nowPos;
         };
     }
     

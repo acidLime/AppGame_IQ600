@@ -44,9 +44,11 @@ public class CharacterCtrl : MonoBehaviour
     bool _isEnd = false;
     WaitForSeconds startWait;
     WaitForSeconds moveWait;
+    int _characterIdx;
     public float moveTime = 2.0f;
     public float startTime = 0.0f;
     public int n = 2;
+    bool[] arrived;
 
     // Use this for initialization
     void Start () {
@@ -85,19 +87,20 @@ public class CharacterCtrl : MonoBehaviour
         startTime = moveTime * n;
         startWait = new WaitForSeconds(startTime);
         anim = new Animator[_characterNum];
-        
+        _characterIdx = _characterNum -1;
+
         float gridSize = DM.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
         targetPos = new Vector3[_characterNum];
        _characterMoveCount = new int[_characterNum];
         _canMove = new bool[_characterNum];
+        arrived = new bool[_characterNum];
 
         for (int i = 0; i < _characterNum; i++)
         {
             _characterMoveTile.Add(new List<Vector3>());
             Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
-            Debug.Log("em");
             _character[i] = Instantiate(characterPrefab, _characterMoveTile[i][0], Quaternion.identity);
 
             _character[i].SetActive(true);
@@ -126,40 +129,18 @@ public class CharacterCtrl : MonoBehaviour
             
             _canMove[characterIdx] = true;
             yield return moveWait;
-            if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
-            {
-                bool[] clear = new bool[_characterNum];
-                for(int i = 0; i < _characterNum; i++)
-                {
-                    clear[i] = false;
-                    if(TouchEvent.instance.TrackList[i].Contains(DM._trapTilePos))
-                    {
-                        
-                        clear[i] = true;
-                        break;
-                    }
-                }
-                
-                StopAllCoroutines();
-                if (clear[0] || clear[1])
-                    GameManager.instance.EndGame();
-                else
-                    GameManager.instance.GameOver();
-                break;
-
-            }
         }
     }
     IEnumerator CharacterMoveStart()
     {
-        //int characterIdx = DM.StartTileNum -1;
-        int characterIdx = 1;
+        
+        //int characterIdx = 1;
         yield return moveTime;
-        while (characterIdx >= 0)
+        while (_characterIdx >= 0)
         {
             yield return startWait;
             Debug.Log(startWait);
-            StartCoroutine(CanMove(characterIdx--));
+            StartCoroutine(CanMove(_characterIdx--));
         }
     }
     void Move(int characterIdx)
@@ -172,7 +153,12 @@ public class CharacterCtrl : MonoBehaviour
             targetPos[characterIdx], 1.0f * Time.deltaTime);
 
         if (diff.sqrMagnitude < 0.01f * 0.01f)
+        {
             _canMove[characterIdx] = false;
+            if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
+                arrived[characterIdx] = true;
+        }
+
     }
     public void SetAnimation(int characterIdx, EDir dir)
     {

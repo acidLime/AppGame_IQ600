@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
 
@@ -11,8 +12,7 @@ public class UIManager : MonoBehaviour {
     public Sprite[] gameoverImage;
     public Text[] text;
     public static UIManager instance;
-
-    public GameObject[] timer;
+    public Image[] timer;
     public Text[] timeText;
     float[] times;
     public GameObject[] trapPanel;
@@ -31,23 +31,26 @@ public class UIManager : MonoBehaviour {
             //instance를 삭제
             Destroy(gameObject);
         }
-        ShowCharacterInfo(2);
-        ShowTrapCount(1);
-        times = new float[2];
-        times[0] = 10.0f;
-        times[1] = 6.0f;
-        Debug.Log(DataManager.instance.StartTileNum);
-        for(int i = 0; i < 2; i++)
-        {
-            timer[i].transform.position = Camera.main.ScreenToWorldPoint(MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]));
-            Debug.Log(timer[i].transform.position);
-        }
+        
     }
 
     // Update is called once per frame
     void Update () {
         TimeCounter();
 
+    }
+    public void Init()
+    {
+        ShowCharacterInfo(DataManager.instance.StartTileNum);
+        ShowTrapCount(DataManager.instance.TrapTileNum);
+        times = new float[2];
+        times[0] = 6.0f;
+        times[1] = 8.0f;
+        Debug.Log(DataManager.instance.StartTileNum);
+        for (int i = 0; i < 2; i++)
+        {
+            timer[i].rectTransform.localPosition = MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]) + new Vector3(0.96f,0.96f, 0);
+        }
     }
     public void ShowCharacterInfo(int characterIdx)
     {
@@ -81,7 +84,8 @@ public class UIManager : MonoBehaviour {
                 times[i] -= Time.deltaTime;
             else
             {
-                timer[i].SetActive(false);
+                timer[i].enabled = false;
+                timeText[i].enabled = false;
             }
             timeText[i].text = Mathf.Ceil(times[i]).ToString();
         }
@@ -92,5 +96,17 @@ public class UIManager : MonoBehaviour {
         {
             trapPanel[i].SetActive(true);
         }
+    }
+    public void SoundOption()
+    {
+
+    }
+    public void GameOption()
+    {
+
+    }
+    public void ReturnToTitle()
+    {
+        SceneManager.LoadScene("StageSelectScene");
     }
 }

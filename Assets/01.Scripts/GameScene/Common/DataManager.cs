@@ -96,6 +96,7 @@ public class DataManager : MonoBehaviour
         }
     }
     public Vector3Int _trapTilePos;
+    public int TrapTileNum;
     private void Awake()
     {
         //instance가 null이면
@@ -129,15 +130,19 @@ public class DataManager : MonoBehaviour
         int dataIdx = 0;
         int x = 0;
         int y = 0;
-        while ((int)_tileData[dataIdx]["stage"] == _stageLevel)
+        while ((int)_tileData[dataIdx]["stage"] != 0)
         {
-            x = (int)_tileData[dataIdx]["tileX"];
-            y = (int)_tileData[dataIdx]["tileY"];
+            if((int)_tileData[dataIdx]["stage"] == StageLevel)
+            {
+                x = (int)_tileData[dataIdx]["tileX"];
+                y = (int)_tileData[dataIdx]["tileY"];
 
-            _tiles[x, y].tilePos = new Vector3Int(x, y, 0);
-            _tiles[x, y].type = (ETileType)(int)_tileData[dataIdx]["tileType"];
-            _tiles[x, y].canDraw = true;
+                _tiles[x, y].tilePos = new Vector3Int(x, y, 0);
+                _tiles[x, y].type = (ETileType)(int)_tileData[dataIdx]["tileType"];
+                _tiles[x, y].canDraw = true;
+            }
             dataIdx++;
+
 
         }
 
@@ -153,9 +158,15 @@ public class DataManager : MonoBehaviour
             for (j = 0; j < MapSize; j++)
             {
                 if (Tiles[i, j].type == ETileType.START)
-                    _startTilePos[dataIdx++] = Tiles[i,j].tilePos;
+                {
+
+                    _startTilePos[dataIdx++] = Tiles[i, j].tilePos;
+                }
                 if (Tiles[i, j].type == ETileType.TRAP)
+                {
                     _trapTilePos = Tiles[i, j].tilePos;
+                    TrapTileNum++;
+                }
             }
         }
     }

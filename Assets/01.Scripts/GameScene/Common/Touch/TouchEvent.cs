@@ -110,8 +110,6 @@ public class TouchEvent : MonoBehaviour
             _trackList[i].Push(DM.StartTilePos[i]);
 
         }
-        Debug.Log(DM.MapSize);
-        Debug.Log(DM.StartTileNum);
     }
     public Vector3Int GetPrevTilePos()
     {

@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
         MapManager.instance.InitMap();
         TouchEvent.instance.Init();
         CharacterCtrl.instance.Init();
-
+        UIManager.instance.Init();
         UIManager.instance.ClosePanel();
 
     }
