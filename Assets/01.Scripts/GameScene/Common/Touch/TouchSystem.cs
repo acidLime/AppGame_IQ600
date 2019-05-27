@@ -73,7 +73,7 @@ public class TouchSystem : MonoBehaviour {
                 touchEvent.PrevTilePos = touchEvent.GetPrevTilePos();
 
             touchEvent.PrevTouchPos = touchPos;
-            touchEvent.ChangeStartTile();
+            touchEvent.ChangeStartTile(touchPos);
             touchEvent.curSlideQueue.Enqueue(touchPos);
 
         }; 

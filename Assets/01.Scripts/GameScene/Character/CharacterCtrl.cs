@@ -10,21 +10,17 @@ public enum CharacterDir
     LEFT,
     RIGHT
 }
+
 public class CharacterCtrl : MonoBehaviour
 {
-    DataManager DM;
-    public Animator[] anim;
-    public GridLayout characterTilemap;
-    public CharacterDir characterDir;
-    public static CharacterCtrl instance;
-    bool[] _canMove;
-    int _characterNum;
-    int[] _characterMoveCount;
-    public GameObject characterPrefab;
+    public Character[] characters;
 
-    Vector3[] targetPos;
+    DataManager DM;
+    public GridLayout characterTilemap;
+    public static CharacterCtrl instance;
+    int _characterNum;
+    public GameObject characterPrefab;
     Vector3Int[] essentialPassingTile;
-    //List<Queue<Vector3>> _characterMoveTile;
     List<List<Vector3>> _characterMoveTile;
     public List<List<Vector3>> CharacterMoveTile
     {
@@ -37,18 +33,14 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile = value;
         }
     }
-    GameObject[] _character;
 
-    TileBase[] _tileBase;
 
-    bool _isEnd = false;
     WaitForSeconds startWait;
     WaitForSeconds moveWait;
     int _characterIdx;
     public float moveTime = 2.0f;
     public float startTime = 0.0f;
-    public int n = 2;
-    bool[] arrived;
+    public int n = 1;
 
     // Use this for initialization
     void Start () {
@@ -73,43 +65,44 @@ public class CharacterCtrl : MonoBehaviour
     {
         for(int characterIdx = 0; characterIdx < _characterNum; characterIdx++)
         {
-            if (_canMove[characterIdx] == true)
+            if (characters[characterIdx].canMove == true)
             {
                 Move(characterIdx);
             }
         }
-	}
+        ClearCheck();
+
+    }
     public void Init()
     {
         _characterNum = DM.StartTileNum;
-        _character = new GameObject[_characterNum];
+        characters = new Character[_characterNum];
+
         moveWait = new WaitForSeconds(moveTime);
         startTime = moveTime * n;
         startWait = new WaitForSeconds(startTime);
-        anim = new Animator[_characterNum];
         _characterIdx = _characterNum -1;
 
         float gridSize = DM.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
-        targetPos = new Vector3[_characterNum];
-       _characterMoveCount = new int[_characterNum];
-        _canMove = new bool[_characterNum];
-        arrived = new bool[_characterNum];
-
+        
         for (int i = 0; i < _characterNum; i++)
         {
+            characters[i] = new Character();
             _characterMoveTile.Add(new List<Vector3>());
             Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
-            _character[i] = Instantiate(characterPrefab, _characterMoveTile[i][0], Quaternion.identity);
+            Debug.Log(worldPos);
 
-            _character[i].SetActive(true);
-            _character[i].transform.localScale = new Vector3(gridSize, gridSize, 1);
-            anim[i] = _character[i].GetComponentInChildren<Animator>();
-            //_character[i].transform.position = _characterMoveTile[i][0];
-            _characterMoveCount[i] = 0;
-            _canMove[i] = false;
+            characters[i].character = Instantiate(characterPrefab, _characterMoveTile[i][0], Quaternion.identity);
+            characters[i].anim = characters[i].character.GetComponentInChildren<Animator>();
+            characters[i].characterMoveCount = 0;
+            characters[i].canMove = false;
+            characters[i].arrived = false;
+            characters[i].character.SetActive(true);
+            characters[i].character.transform.localPosition = worldPos;
         }
+
 
     }
     IEnumerator CanMove(int characterIdx) 
@@ -117,17 +110,18 @@ public class CharacterCtrl : MonoBehaviour
         while(_characterMoveTile[characterIdx].Count > 0)
         {
             
-            if(_characterMoveTile[characterIdx].Count <= _characterMoveCount[characterIdx])
+            if(_characterMoveTile[characterIdx].Count <= characters[characterIdx].characterMoveCount)
             {
                 StopAllCoroutines();
                 GameManager.instance.GameOver();
                 break;
             }
-            targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
-            Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(targetPos[characterIdx]);
+            //targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
+            //Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(targetPos[characterIdx]);
             //if(targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count == _characterMoveTile[1].Count - 2)
-            
-            _canMove[characterIdx] = true;
+            characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
+            Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
+            characters[characterIdx].canMove = true;
             yield return moveWait;
         }
     }
@@ -139,29 +133,41 @@ public class CharacterCtrl : MonoBehaviour
         while (_characterIdx >= 0)
         {
             yield return startWait;
-            Debug.Log(startWait);
             StartCoroutine(CanMove(_characterIdx--));
         }
     }
     void Move(int characterIdx)
     {
-        Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(targetPos[characterIdx]);
+        Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
         SetAnimation(characterIdx, DM.Tiles[tilePos.x, tilePos.y].dir);
-        Vector3 diff = _character[characterIdx].transform.position - targetPos[characterIdx];
+        Vector3 diff = characters[characterIdx].character.transform.position - characters[characterIdx].targetPos;
         
-        _character[characterIdx].transform.position = Vector3.MoveTowards(_character[characterIdx].transform.position,
-            targetPos[characterIdx], 1.0f * Time.deltaTime);
+        characters[characterIdx].character.transform.position = Vector3.MoveTowards(characters[characterIdx].character.transform.position,
+            characters[characterIdx].targetPos, 1.0f * Time.deltaTime);
 
         if (diff.sqrMagnitude < 0.01f * 0.01f)
         {
-            _canMove[characterIdx] = false;
+            characters[characterIdx].canMove = false;
             if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
-                arrived[characterIdx] = true;
+                characters[characterIdx].arrived = true;
         }
 
     }
     public void SetAnimation(int characterIdx, EDir dir)
     {
-        anim[characterIdx].SetInteger("CharacterDir", (int)dir);
+        characters[characterIdx].anim.SetInteger("CharacterDir", (int)dir);
+    }
+    public void ClearCheck()
+    {
+        int checkCount = _characterNum;
+        for(int i = 0; i < _characterNum; i++)
+        {
+            if (characters[i].arrived == true)
+                checkCount--;
+        }
+        if(checkCount == 0)
+        {
+            GameManager.instance.EndGame();
+        }
     }
 }

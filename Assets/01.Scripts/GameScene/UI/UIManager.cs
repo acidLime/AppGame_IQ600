@@ -15,7 +15,13 @@ public class UIManager : MonoBehaviour {
     public Image[] timer;
     public Text[] timeText;
     float[] times;
+    public float showMissionTimer = 5.0f;
+    public GameObject playButton;
+    public GameObject stopButton;
+    public GameObject blackPanel;
+    public GameObject missionPanel;
     public GameObject[] trapPanel;
+    static bool isClose = false;
 
     // Use this for initialization
     void Start ()
@@ -31,24 +37,28 @@ public class UIManager : MonoBehaviour {
             //instance를 삭제
             Destroy(gameObject);
         }
-        
     }
 
     // Update is called once per frame
     void Update () {
         TimeCounter();
-
+        ShowMissionPanel();
     }
     public void Init()
     {
-        ShowCharacterInfo(DataManager.instance.StartTileNum);
+        int startTileNum = 2;
+        Debug.Log(startTileNum);
+        ShowCharacterInfo(startTileNum);
         ShowTrapCount(DataManager.instance.TrapTileNum);
-        times = new float[2];
+        times = new float[startTileNum];
+        isClose = false;
+        showMissionTimer = 5.0f;
         times[0] = 6.0f;
-        times[1] = 8.0f;
+        times[1] = 4.0f;
         Debug.Log(DataManager.instance.StartTileNum);
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < startTileNum; i++)
         {
+            //times[i] = CharacterCtrl.instance.characters[i].startTime;
             timer[i].rectTransform.localPosition = MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]) + new Vector3(0.96f,0.96f, 0);
         }
     }
@@ -107,6 +117,44 @@ public class UIManager : MonoBehaviour {
     }
     public void ReturnToTitle()
     {
+        Time.timeScale = 1.0f;
         SceneManager.LoadScene("StageSelectScene");
     }
+    public void GameStop()
+    {
+        Time.timeScale = 0.0f;
+        playButton.SetActive(true);
+        stopButton.SetActive(false);
+        blackPanel.SetActive(true);
+    }
+    public void GamePlay()
+    {
+        Time.timeScale = 1.0f;
+        playButton.SetActive(false);
+        stopButton.SetActive(true);
+        blackPanel.SetActive(false);
+    }
+    public void ShowMissionPanel()
+    {
+        if(!isClose)
+        {
+            if (showMissionTimer >= 0.0f)
+            {
+                Time.timeScale = 1.0f;
+                showMissionTimer -= 0.016f;
+                int touchCount = Input.touchCount;
+                if (touchCount == 1)
+                    showMissionTimer = -1f;
+                
+                Time.timeScale = 0.0f;
+            }
+            else
+            {
+                missionPanel.SetActive(false);
+                Time.timeScale = 1.0f;
+                isClose = true;
+            }
+        }
+    }
+    
 }

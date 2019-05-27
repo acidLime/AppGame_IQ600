@@ -26,7 +26,6 @@ public class StageTouchEvent : MonoBehaviour {
             if(_cam.position.x > 11.4f)
                 _cam.position = new Vector3(11.4f, _cam.position.y, _cam.position.z);
 
-            Debug.Log(_cam.position);
             if (prevPos == Vector2.zero)
             {
                 prevPos = Input.GetTouch(0).position;

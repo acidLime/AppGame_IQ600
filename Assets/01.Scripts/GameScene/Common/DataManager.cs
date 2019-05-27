@@ -142,8 +142,6 @@ public class DataManager : MonoBehaviour
                 _tiles[x, y].canDraw = true;
             }
             dataIdx++;
-
-
         }
 
         FindTile();

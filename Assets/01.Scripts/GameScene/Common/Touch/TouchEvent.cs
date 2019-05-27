@@ -145,7 +145,6 @@ public class TouchEvent : MonoBehaviour
             if (GetPrevTilePos() != tilePos)
                 return false;
 
-            int i = 0;
             //장애물이라면 리턴
             if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.BLOCK)
                     return false;
@@ -276,9 +275,10 @@ public class TouchEvent : MonoBehaviour
         Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, rot));
         tilemap.SetTransformMatrix(tilePos, matrix);
     }
-    public void ChangeStartTile()
+    public void ChangeStartTile(Vector3Int touchPos)
     {
-        MM.ChangeTile(TrackList[_curTrack].Peek(), MM.TileIdx);
+        if(touchPos == TrackList[_curTrack].Peek())
+            MM.ChangeTile(TrackList[_curTrack].Peek(), ERoad.VERTICAL);
     }
     //인자로 받은 위치까지 타일 삭제
     public void RemoveTile(Vector3Int removePos)

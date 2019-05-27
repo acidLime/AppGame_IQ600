@@ -48,11 +48,11 @@ public class GameManager : MonoBehaviour {
     public void GameOver()
     {
         UIManager.instance.ShowGameOver(Random.Range(0,3));
+        Time.timeScale = 0.0f;
     }
     public void EndGame()
     {
-        DataManager.instance.StageLevel++;
         UIManager.instance.ShowClearPanel();
-        Debug.Log("end");
+        Time.timeScale = 0.0f;
     }
 }
