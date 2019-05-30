@@ -150,6 +150,10 @@ public class CharacterCtrl : MonoBehaviour
             characters[characterIdx].canMove = false;
             if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
                 characters[characterIdx].arrived = true;
+            if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.TRAP)
+                MapManager.instance.ObjectTilemap.SetTile(tilePos, null);
+            MapManager.instance.tilemap.SetTileFlags(tilePos, TileFlags.None);
+            MapManager.instance.tilemap.SetColor(tilePos, new Color(0.75f, 0.75f, 0.75f, 1.0f));
         }
 
     }

@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour {
     public GameObject stopButton;
     public GameObject blackPanel;
     public GameObject missionPanel;
+    public GameObject optionPanel;
     public GameObject[] trapPanel;
     static bool isClose = false;
 
@@ -113,7 +114,9 @@ public class UIManager : MonoBehaviour {
     }
     public void GameOption()
     {
-
+        Time.timeScale = 0.0f;
+        blackPanel.SetActive(true);
+        optionPanel.SetActive(true);
     }
     public void ReturnToTitle()
     {
@@ -123,16 +126,13 @@ public class UIManager : MonoBehaviour {
     public void GameStop()
     {
         Time.timeScale = 0.0f;
-        playButton.SetActive(true);
-        stopButton.SetActive(false);
         blackPanel.SetActive(true);
     }
     public void GamePlay()
     {
         Time.timeScale = 1.0f;
-        playButton.SetActive(false);
-        stopButton.SetActive(true);
         blackPanel.SetActive(false);
+        optionPanel.SetActive(false);
     }
     public void ShowMissionPanel()
     {

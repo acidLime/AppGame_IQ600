@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour {
 
         UI = UIManager.instance;
         int idx = DataManager.instance.StartTileNum;
-        UI.ShowCharacterInfo(idx);
+        //UI.ShowCharacterInfo(idx);
     }
 
     // Update is called once per frame
