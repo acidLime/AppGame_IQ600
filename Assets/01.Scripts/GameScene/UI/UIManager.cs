@@ -122,6 +122,9 @@ public class UIManager : MonoBehaviour {
     {
         Time.timeScale = 1.0f;
         SceneManager.LoadScene("StageSelectScene");
+        SoundManager.instance.PlaySfxSound("event:/SFX/UI/no");
+        SoundManager.instance.BGMParameter.setValue(3);
+
     }
     public void GameStop()
     {
@@ -153,6 +156,7 @@ public class UIManager : MonoBehaviour {
                 missionPanel.SetActive(false);
                 Time.timeScale = 1.0f;
                 isClose = true;
+                StartCoroutine(CharacterCtrl.instance.CharacterMoveStart());
             }
         }
     }

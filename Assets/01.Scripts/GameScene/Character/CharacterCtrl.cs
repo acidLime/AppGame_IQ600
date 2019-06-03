@@ -39,7 +39,7 @@ public class CharacterCtrl : MonoBehaviour
     WaitForSeconds moveWait;
     int _characterIdx;
     public float moveTime = 2.0f;
-    public float startTime = 0.0f;
+    public float startTime = 2.0f;
     public int n = 1;
 
     // Use this for initialization
@@ -56,12 +56,12 @@ public class CharacterCtrl : MonoBehaviour
             Destroy(gameObject);
         }
         DM = DataManager.instance;
-        StartCoroutine(CharacterMoveStart());
         //Init();
+
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update ()
     {
         for(int characterIdx = 0; characterIdx < _characterNum; characterIdx++)
         {
@@ -94,7 +94,7 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile[i].Add(worldPos);
             Debug.Log(worldPos);
 
-            characters[i].character = Instantiate(characterPrefab, _characterMoveTile[i][0], Quaternion.identity);
+            characters[i].character = Instantiate(characterPrefab, worldPos, Quaternion.identity);
             characters[i].anim = characters[i].character.GetComponentInChildren<Animator>();
             characters[i].characterMoveCount = 0;
             characters[i].canMove = false;
@@ -125,14 +125,15 @@ public class CharacterCtrl : MonoBehaviour
             yield return moveWait;
         }
     }
-    IEnumerator CharacterMoveStart()
+    public IEnumerator CharacterMoveStart()
     {
         
         //int characterIdx = 1;
-        yield return moveTime;
+        yield return moveTime * 2;
         while (_characterIdx >= 0)
         {
             yield return startWait;
+            SoundManager.instance.PlaySfxSound("event:/SFX/stage/start 0sec");
             StartCoroutine(CanMove(_characterIdx--));
         }
     }

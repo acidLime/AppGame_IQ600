@@ -43,16 +43,21 @@ public class GameManager : MonoBehaviour {
         CharacterCtrl.instance.Init();
         UIManager.instance.Init();
         UIManager.instance.ClosePanel();
+        SoundManager.instance.PlayOnBgm("event:/BGM/stage");
+
 
     }
     public void GameOver()
     {
         UIManager.instance.ShowGameOver(Random.Range(0,3));
+        SoundManager.instance.BGMParameter.setValue(1);
         Time.timeScale = 0.0f;
     }
     public void EndGame()
     {
         UIManager.instance.ShowClearPanel();
+        SoundManager.instance.BGMParameter.setValue(2);
+
         Time.timeScale = 0.0f;
     }
 }

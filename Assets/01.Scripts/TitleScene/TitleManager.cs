@@ -11,6 +11,16 @@ public class TitleManager : MonoBehaviour {
     {
         int touchCount = Input.touchCount;
         if (touchCount == 1)
+        {
             SceneManager.LoadScene("StageSelectScene");
+
+            SoundManager.instance.PlayOnBgm("event:/BGM/scene");
+        }
+    }
+    public void Test2()
+    {
+        SceneManager.LoadScene("StageSelectScene");
+        
+
     }
 }
