@@ -67,6 +67,8 @@ public class MapManager : MonoBehaviour {
                     continue;
                 }
                 ObjectTilemap.SetTile(DM.Tiles[i, j].tilePos, otherBase[(int)DM.Tiles[i, j].type]);
+                tilemap.SetTileFlags(DM.Tiles[i, j].tilePos, TileFlags.None);
+
             }
         }
         
@@ -137,7 +139,6 @@ public class MapManager : MonoBehaviour {
         if(prevDir == curDir)
         {
             tilemap.SetTile(prevTilePos, roadTiles[(int)_tileIdx]);
-            tilemap.SetTileFlags(prevTilePos, TileFlags.None);
             tilemap.SetColor(prevTilePos, new Color(1, 0, 0, 0.3f));
             return;
         }
@@ -194,7 +195,6 @@ public class MapManager : MonoBehaviour {
         } 
         Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, dir)); 
         tilemap.SetTransformMatrix(prevTilePos, matrix);
-        tilemap.SetTileFlags(prevTilePos, TileFlags.None);
         tilemap.SetColor(prevTilePos, new Color(1, 0, 0, 0.3f));
     }
 }

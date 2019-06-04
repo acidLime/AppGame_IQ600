@@ -427,7 +427,7 @@ Prefab:
     - target: {fileID: 114140373094367754, guid: c7df6266aadcfe948b9324b90f1903c4,
         type: 2}
       propertyPath: SFXEventPath
-      value: event:/SFX/stage/start 0sec
+      value: event:/SFX/block/essensial
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114845206336524278, guid: c7df6266aadcfe948b9324b90f1903c4, type: 2}

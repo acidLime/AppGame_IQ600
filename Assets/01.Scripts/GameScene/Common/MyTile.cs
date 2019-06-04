@@ -8,4 +8,5 @@ public class MyTile{
     public EDir dir;
     public ETileType type;
     public bool canDraw;
+    public bool dontDestroy;
 }

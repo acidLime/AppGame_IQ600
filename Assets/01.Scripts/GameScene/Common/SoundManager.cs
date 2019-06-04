@@ -11,11 +11,17 @@ public class SoundManager : MonoBehaviour {
     public string BGMEventPath;
     [FMODUnity.EventRef]
     public string SFXEventPath;
+    [FMODUnity.EventRef]
+    public string footEventPath;
+
     public static SoundManager instance;
     public FMOD.Studio.EventInstance BGMEvent;
     public FMOD.Studio.ParameterInstance BGMParameter;
     public FMOD.Studio.EventInstance SFXEvent;
     public FMOD.Studio.ParameterInstance SFXParameter;
+    public FMOD.Studio.EventInstance footEvent;
+    public FMOD.Studio.ParameterInstance footParameter;
+
     FMODUnity.StudioEventEmitter emitter;
     // Use this for initialization
     private void Awake()
@@ -69,10 +75,18 @@ public class SoundManager : MonoBehaviour {
     }
     public void PlaySfxSound(string sfxPath)
     {
+
         SFXEventPath = sfxPath;
-        BGMEvent = FMODUnity.RuntimeManager.CreateInstance(SFXEventPath);
-        BGMEvent.getParameter("Location", out SFXParameter);
-        BGMEvent.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform));
-        BGMEvent.start();
+        SFXEvent = FMODUnity.RuntimeManager.CreateInstance(SFXEventPath);
+        SFXEvent.getParameter("Location", out SFXParameter);
+        SFXEvent.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform));
+        SFXEvent.start();
+    }
+    public void PlayFootSound()
+    {
+        footEvent = FMODUnity.RuntimeManager.CreateInstance(footEventPath);
+        footEvent.getParameter("Location", out footParameter);
+        footEvent.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform));
+        footEvent.start();
     }
 }

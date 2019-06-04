@@ -48,7 +48,6 @@ public class UIManager : MonoBehaviour {
     public void Init()
     {
         int startTileNum = 2;
-        Debug.Log(startTileNum);
         ShowCharacterInfo(startTileNum);
         ShowTrapCount(DataManager.instance.TrapTileNum);
         times = new float[startTileNum];
@@ -56,7 +55,6 @@ public class UIManager : MonoBehaviour {
         showMissionTimer = 5.0f;
         times[0] = 6.0f;
         times[1] = 4.0f;
-        Debug.Log(DataManager.instance.StartTileNum);
         for (int i = 0; i < startTileNum; i++)
         {
             //times[i] = CharacterCtrl.instance.characters[i].startTime;
@@ -117,25 +115,33 @@ public class UIManager : MonoBehaviour {
         Time.timeScale = 0.0f;
         blackPanel.SetActive(true);
         optionPanel.SetActive(true);
+        SoundManager.instance.PlaySfxSound("event:/SFX/UI/yes");
+
     }
     public void ReturnToTitle()
     {
+
         Time.timeScale = 1.0f;
+        SoundManager.instance.BGMParameter.setValue(3);
+
         SceneManager.LoadScene("StageSelectScene");
         SoundManager.instance.PlaySfxSound("event:/SFX/UI/no");
-        SoundManager.instance.BGMParameter.setValue(3);
 
     }
     public void GameStop()
     {
         Time.timeScale = 0.0f;
         blackPanel.SetActive(true);
+        SoundManager.instance.PlaySfxSound("event:/SFX/UI/yes");
+
     }
     public void GamePlay()
     {
         Time.timeScale = 1.0f;
         blackPanel.SetActive(false);
         optionPanel.SetActive(false);
+        SoundManager.instance.PlaySfxSound("event:/SFX/UI/no");
+
     }
     public void ShowMissionPanel()
     {

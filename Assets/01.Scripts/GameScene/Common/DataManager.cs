@@ -140,6 +140,7 @@ public class DataManager : MonoBehaviour
                 _tiles[x, y].tilePos = new Vector3Int(x, y, 0);
                 _tiles[x, y].type = (ETileType)(int)_tileData[dataIdx]["tileType"];
                 _tiles[x, y].canDraw = true;
+                _tiles[x, y].dontDestroy = false;
             }
             dataIdx++;
         }

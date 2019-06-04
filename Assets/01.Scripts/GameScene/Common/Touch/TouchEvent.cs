@@ -300,6 +300,8 @@ public class TouchEvent : MonoBehaviour
             if (_trackList[_curTrack].Peek() == DM.StartTilePos[_curTrack])
                 break;
             topTilePos = _trackList[_curTrack].Pop();
+            if (DM.Tiles[topTilePos.x, topTilePos.y].dontDestroy)
+                break;
 
             MM.tilemap.SetTile(topTilePos, null);
             DM.Tiles[topTilePos.x, topTilePos.y].canDraw = true;
@@ -344,7 +346,6 @@ public class TouchEvent : MonoBehaviour
         while(curSlideQueue.Count > 0)
         {
             tilePos = curSlideQueue.Dequeue();
-            MM.tilemap.SetTileFlags(tilePos, TileFlags.None);
             MM.tilemap.SetColor(tilePos, new Color(1, 1, 1, 1));
         }
     }

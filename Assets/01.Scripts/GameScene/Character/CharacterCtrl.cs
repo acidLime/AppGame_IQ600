@@ -20,6 +20,7 @@ public class CharacterCtrl : MonoBehaviour
     public static CharacterCtrl instance;
     int _characterNum;
     public GameObject characterPrefab;
+    bool isEssential = false;
     Vector3Int[] essentialPassingTile;
     List<List<Vector3>> _characterMoveTile;
     public List<List<Vector3>> CharacterMoveTile
@@ -33,7 +34,7 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile = value;
         }
     }
-
+    bool isFast = false;
 
     WaitForSeconds startWait;
     WaitForSeconds moveWait;
@@ -69,9 +70,8 @@ public class CharacterCtrl : MonoBehaviour
             {
                 Move(characterIdx);
             }
-        }
-        ClearCheck();
 
+        }
     }
     public void Init()
     {
@@ -92,7 +92,6 @@ public class CharacterCtrl : MonoBehaviour
             _characterMoveTile.Add(new List<Vector3>());
             Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
-            Debug.Log(worldPos);
 
             characters[i].character = Instantiate(characterPrefab, worldPos, Quaternion.identity);
             characters[i].anim = characters[i].character.GetComponentInChildren<Animator>();
@@ -114,6 +113,7 @@ public class CharacterCtrl : MonoBehaviour
             {
                 StopAllCoroutines();
                 GameManager.instance.GameOver();
+
                 break;
             }
             //targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
@@ -122,7 +122,9 @@ public class CharacterCtrl : MonoBehaviour
             characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
             Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
             characters[characterIdx].canMove = true;
+            
             yield return moveWait;
+
         }
     }
     public IEnumerator CharacterMoveStart()
@@ -133,9 +135,11 @@ public class CharacterCtrl : MonoBehaviour
         while (_characterIdx >= 0)
         {
             yield return startWait;
-            SoundManager.instance.PlaySfxSound("event:/SFX/stage/start 0sec");
+            SoundManager.instance.PlaySfxSound("event:/SFX/stage/start 1sec");
             StartCoroutine(CanMove(_characterIdx--));
         }
+       SoundManager.instance.PlayFootSound();
+
     }
     void Move(int characterIdx)
     {
@@ -152,11 +156,24 @@ public class CharacterCtrl : MonoBehaviour
             if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
                 characters[characterIdx].arrived = true;
             if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.TRAP)
+            {
+                SoundManager.instance.PlaySfxSound("event:/SFX/block/essensial");
                 MapManager.instance.ObjectTilemap.SetTile(tilePos, null);
+                isEssential = true;
+
+            }
+            if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.SLOW)
+            {
+                SoundManager.instance.PlaySfxSound("event:/SFX/block/slow");
+                characters[characterIdx].anim.SetTrigger("Slow");
+            }
+            DM.Tiles[tilePos.x, tilePos.y].dontDestroy = true;
             MapManager.instance.tilemap.SetTileFlags(tilePos, TileFlags.None);
             MapManager.instance.tilemap.SetColor(tilePos, new Color(0.75f, 0.75f, 0.75f, 1.0f));
-        }
+            MapManager.instance.tilemap.SetTileFlags(tilePos, TileFlags.LockColor);
 
+        }
+        ClearCheck();
     }
     public void SetAnimation(int characterIdx, EDir dir)
     {
@@ -172,7 +189,36 @@ public class CharacterCtrl : MonoBehaviour
         }
         if(checkCount == 0)
         {
-            GameManager.instance.EndGame();
+            if (isEssential)
+                GameManager.instance.EndGame();
+            else
+                GameManager.instance.GameOver();
+        }
+    }
+    public void PrestoClear()
+    {
+        
+        if(!isFast)
+        {
+            int checkCount = 0;
+            for (int i = 0; i < _characterNum; i++)
+            {
+                int idx = _characterMoveTile[i].Count - 1;
+                Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(_characterMoveTile[i][idx]);
+                Debug.Log(DM.Tiles[tilePos.x, tilePos.y].type);
+                if (DM.Tiles[tilePos.x, tilePos.y].type != ETileType.END)
+                    continue;
+                checkCount++;
+            }
+            Debug.Log(checkCount);
+            if (checkCount == _characterNum)
+            {
+                Time.timeScale = 3.0f;
+                SoundManager.instance.PlaySfxSound("event:/SFX/Charater/foot/footclear");
+                moveWait = new WaitForSeconds(1.0f);
+                checkCount = 0;
+                isFast = true;
+            }
         }
     }
 }

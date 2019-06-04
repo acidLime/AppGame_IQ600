@@ -49,6 +49,9 @@ public class GameManager : MonoBehaviour {
     }
     public void GameOver()
     {
+        SoundManager.instance.SFXEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        SoundManager.instance.footEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+
         UIManager.instance.ShowGameOver(Random.Range(0,3));
         SoundManager.instance.BGMParameter.setValue(1);
         Time.timeScale = 0.0f;
@@ -57,6 +60,8 @@ public class GameManager : MonoBehaviour {
     {
         UIManager.instance.ShowClearPanel();
         SoundManager.instance.BGMParameter.setValue(2);
+        SoundManager.instance.SFXEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        SoundManager.instance.footEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
 
         Time.timeScale = 0.0f;
     }

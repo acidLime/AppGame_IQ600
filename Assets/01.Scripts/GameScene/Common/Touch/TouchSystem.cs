@@ -81,13 +81,13 @@ public class TouchSystem : MonoBehaviour {
         {
             touchEvent.ChangeLastTile();
             touchEvent.ChangeTileColor();
+            CharacterCtrl.instance.PrestoClear();
         };
         touchMove += (touches) =>
         {
             Vector3Int slidePos = touchEvent.GetTilePos();
             if (!touchEvent.CanTouchProc(slidePos) || !touchEvent.CanTileDraw(slidePos))
                 return;
-            Debug.Log(slidePos);
 
             touchEvent.DrawTile(slidePos);
 
