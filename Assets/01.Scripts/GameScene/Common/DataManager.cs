@@ -60,7 +60,23 @@ public class DataManager : MonoBehaviour
             return _tileData;
         }
     }
-    int _stageLevel = 1;
+    List<Dictionary<string, object>> _missionData;
+    public List<Dictionary<string, object>> MissionData
+    {
+        get
+        {
+            return _missionData;
+        }
+    }
+    List<Dictionary<string, object>> _characterData;
+    public List<Dictionary<string, object>> CharacterData
+    {
+        get
+        {
+            return _characterData;
+        }
+    }
+    int _stageLevel;
     public int StageLevel
     {
         get
@@ -111,13 +127,16 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject);
         }
         _tileData = CSVReader.Read("tile");
-        PlayerPrefs.SetInt("Data_ClearLevel", 1);
+        _missionData = CSVReader.Read("Mission");
+        _characterData = CSVReader.Read("StartTime");
     }
     public void Init()
     {
+        _stageLevel = LevelManager.instance.StageLevel;
         _mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
         _gridSize = 8.8f / _mapSize;
-        _startTileNum = 2;
+        Debug.Log(_missionData[0]["stage"]);
+        _startTileNum = (int)_characterData[_stageLevel-1]["characterNum"];
         _tiles = new MyTile[_mapSize, _mapSize];
         for(int i = 0; i < _mapSize; i++)
         {

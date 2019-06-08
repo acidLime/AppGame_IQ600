@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour {
         SoundManager.instance.BGMParameter.setValue(2);
         SoundManager.instance.SFXEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         SoundManager.instance.footEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-
+        LevelManager.instance.OpenTheNextStage();
         Time.timeScale = 0.0f;
     }
 }

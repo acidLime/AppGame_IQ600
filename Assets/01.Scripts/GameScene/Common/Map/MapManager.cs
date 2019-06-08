@@ -111,7 +111,6 @@ public class MapManager : MonoBehaviour {
             DM.Tiles[position.x, position.y].type == ETileType.END)
             return;
         tilemap.SetTile(position, otherBase[(int)tileType]);
-        Debug.Log("changeTile" + position);
     }
     public void ChangeTile(Vector3Int position, ERoad roadType)
     {

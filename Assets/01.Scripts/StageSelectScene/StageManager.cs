@@ -10,6 +10,8 @@ public class StageManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        LevelManager.instance.StageOpen();
+
         SoundManager.instance.PlayOnBgm("event:/BGM/scene");
     }
 
@@ -24,9 +26,8 @@ public class StageManager : MonoBehaviour
     }
     public void PlayOnStage(int stageLevel)
     {
+        LevelManager.instance.StageLevel = stageLevel;
         SceneManager.LoadScene("GameScene");
-
-
     }
 
 }

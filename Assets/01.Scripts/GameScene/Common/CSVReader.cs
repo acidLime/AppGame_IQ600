@@ -13,6 +13,7 @@ public class CSVReader
 	public static List<Dictionary<string, object>> Read(string file)
 	{
 		var list = new List<Dictionary<string, object>>();
+        System.Text.Encoding.GetEncoding("euc-kr");
 		TextAsset data = Resources.Load (file) as TextAsset;
 		
 		var lines = Regex.Split (data.text, LINE_SPLIT_RE);

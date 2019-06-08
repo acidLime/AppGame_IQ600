@@ -135,7 +135,6 @@ public class CharacterCtrl : MonoBehaviour
         while (_characterIdx >= 0)
         {
             yield return startWait;
-            SoundManager.instance.PlaySfxSound("event:/SFX/stage/start 1sec");
             StartCoroutine(CanMove(_characterIdx--));
         }
        SoundManager.instance.PlayFootSound();

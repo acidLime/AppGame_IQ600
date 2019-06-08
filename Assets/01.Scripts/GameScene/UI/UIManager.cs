@@ -10,7 +10,8 @@ public class UIManager : MonoBehaviour {
     public GameObject gameoverPanel;
     public GameObject clearPanel;
     public Sprite[] gameoverImage;
-    public Text[] text;
+    public Text[] characterInfoText;
+    public Text missionText;
     public static UIManager instance;
     public Image[] timer;
     public Text[] timeText;
@@ -55,6 +56,7 @@ public class UIManager : MonoBehaviour {
         showMissionTimer = 5.0f;
         times[0] = 6.0f;
         times[1] = 4.0f;
+        SetMissionPanelText();
         for (int i = 0; i < startTileNum; i++)
         {
             //times[i] = CharacterCtrl.instance.characters[i].startTime;
@@ -70,7 +72,7 @@ public class UIManager : MonoBehaviour {
     }
     public void UpdataCharacterInfo(int characterIdx, int tileCount)
     {
-        text[characterIdx].text = tileCount.ToString();
+        characterInfoText[characterIdx].text = tileCount.ToString();
     }
     public void ShowGameOver(int imageIdx)
     {
@@ -150,7 +152,7 @@ public class UIManager : MonoBehaviour {
             if (showMissionTimer >= 0.0f)
             {
                 Time.timeScale = 1.0f;
-                showMissionTimer -= 0.016f;
+                showMissionTimer -= Time.deltaTime;
                 int touchCount = Input.touchCount;
                 if (touchCount == 1)
                     showMissionTimer = -1f;
@@ -165,6 +167,10 @@ public class UIManager : MonoBehaviour {
                 StartCoroutine(CharacterCtrl.instance.CharacterMoveStart());
             }
         }
+    }
+    public void SetMissionPanelText()
+    {
+        missionText.text = DataManager.instance.MissionData[DataManager.instance.StageLevel]["missionText"].ToString();
     }
     
 }
