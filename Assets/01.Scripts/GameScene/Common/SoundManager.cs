@@ -23,6 +23,7 @@ public class SoundManager : MonoBehaviour {
     public FMOD.Studio.ParameterInstance footParameter;
 
     FMODUnity.StudioEventEmitter emitter;
+
     // Use this for initialization
     private void Awake()
     {

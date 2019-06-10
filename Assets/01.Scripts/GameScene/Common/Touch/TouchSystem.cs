@@ -62,7 +62,6 @@ public class TouchSystem : MonoBehaviour {
             touchEvent.IsStart = touchEvent.IsStartTile(touchPos);
             touchEvent.FindCurTrack(touchPos);
             touchEvent.CheckDoubleTouch(touchPos);
-            //Debug.Log(touchPos);
             if (touchEvent.CanDoubleTouch == true)
             {
                 touchEvent.RemoveTile(touchPos);

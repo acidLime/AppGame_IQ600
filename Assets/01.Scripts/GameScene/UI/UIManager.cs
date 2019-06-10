@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
 
+    int startTileNum;
+
     public GameObject[] characterInfo;
     public GameObject gameoverPanel;
     public GameObject clearPanel;
@@ -48,24 +50,24 @@ public class UIManager : MonoBehaviour {
     }
     public void Init()
     {
-        int startTileNum = 2;
-        ShowCharacterInfo(startTileNum);
+        startTileNum = DataManager.instance.StartTileNum;
+        ShowCharacterInfo();
         ShowTrapCount(DataManager.instance.TrapTileNum);
         times = new float[startTileNum];
         isClose = false;
         showMissionTimer = 5.0f;
-        times[0] = 6.0f;
-        times[1] = 4.0f;
-        SetMissionPanelText();
+        SetMissionText();
         for (int i = 0; i < startTileNum; i++)
         {
-            //times[i] = CharacterCtrl.instance.characters[i].startTime;
-            timer[i].rectTransform.localPosition = MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]) + new Vector3(0.96f,0.96f, 0);
+            times[i] = (CharacterCtrl.instance.moveTime *
+                (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" + (i + 1)]) + 4;
+            timer[i].rectTransform.localPosition =
+                MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]) + new Vector3(0.6f,1f, 0);
         }
     }
-    public void ShowCharacterInfo(int characterIdx)
+    public void ShowCharacterInfo()
     {
-        for(int i = 0; i < characterIdx; i++)
+        for(int i = 0; i < startTileNum; i++)
         {
             characterInfo[i].SetActive(true);
         }
@@ -89,7 +91,7 @@ public class UIManager : MonoBehaviour {
     }
     public void TimeCounter()
     {
-        for(int i = 0; i < DataManager.instance.StartTileNum; i++)
+        for(int i = 0; i < startTileNum; i++)
         {
             if(times[i] > 0)
                 times[i] -= Time.deltaTime;
@@ -97,6 +99,7 @@ public class UIManager : MonoBehaviour {
             {
                 timer[i].enabled = false;
                 timeText[i].enabled = false;
+                StartCoroutine(CharacterCtrl.instance.CanMove(i));
             }
             timeText[i].text = Mathf.Ceil(times[i]).ToString();
         }
@@ -110,7 +113,6 @@ public class UIManager : MonoBehaviour {
     }
     public void SoundOption()
     {
-
     }
     public void GameOption()
     {
@@ -152,7 +154,8 @@ public class UIManager : MonoBehaviour {
             if (showMissionTimer >= 0.0f)
             {
                 Time.timeScale = 1.0f;
-                showMissionTimer -= Time.deltaTime;
+                showMissionTimer -= 0.016f;
+
                 int touchCount = Input.touchCount;
                 if (touchCount == 1)
                     showMissionTimer = -1f;
@@ -164,13 +167,13 @@ public class UIManager : MonoBehaviour {
                 missionPanel.SetActive(false);
                 Time.timeScale = 1.0f;
                 isClose = true;
-                StartCoroutine(CharacterCtrl.instance.CharacterMoveStart());
             }
         }
     }
-    public void SetMissionPanelText()
+    public void SetMissionText()
     {
-        missionText.text = DataManager.instance.MissionData[DataManager.instance.StageLevel]["missionText"].ToString();
+        missionText.supportRichText = true;
+        missionText.text = (string)DataManager.instance.MissionData[DataManager.instance.StageLevel]["missionText"];
     }
     
 }

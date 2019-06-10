@@ -82,6 +82,16 @@
     <Compile Include="Assets\FMOD\ResonanceAudio\Scripts\FmodResonanceAudioRoom.cs" />
     <Compile Include="Assets\GoogleVR\Scripts\Audio\FmodGvrAudio.cs" />
     <Compile Include="Assets\GoogleVR\Scripts\Audio\FmodGvrAudioRoom.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\Animation\CurveAnimation.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\Animation\CurveLibrary.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\Animation\ShakeAnimation.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\Animation\ShakeLibrary.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\Animation\TextAnimation.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\Examples\TextTyperTester.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\RichTextTag.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\TextTagParser.cs" />
+    <Compile Include="Assets\RedBlueGames\TextTyper\TextTyper.cs" />
+    <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile.shader" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/겜준/Desktop/프로젝트/IQ500/AppGame_IQ600/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

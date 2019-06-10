@@ -1,5 +1,5 @@
-﻿stage,missionText,image
-1, <color=#0000ff>파란</color> 용사가 1칸 더 가야 할 것 같아! ,1
+﻿stage,missionText,image,color
+1, "<color=#0000ff>"파란"</color>" 용사가 1칸 더 가야 할 것 같아! ,1
 2, 파란 용사가 1칸 더 가야 할 것 같아!,0
 3, 파란 용사가 2칸 더 가야 할 것 같아!,0
 4, 빨간 용사가 1칸 더 가야 할 것 같아!,1

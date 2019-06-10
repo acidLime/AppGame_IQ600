@@ -36,11 +36,9 @@ public class CharacterCtrl : MonoBehaviour
     }
     bool isFast = false;
 
-    WaitForSeconds startWait;
     WaitForSeconds moveWait;
     int _characterIdx;
     public float moveTime = 2.0f;
-    public float startTime = 2.0f;
     public int n = 1;
 
     // Use this for initialization
@@ -79,8 +77,6 @@ public class CharacterCtrl : MonoBehaviour
         characters = new Character[_characterNum];
 
         moveWait = new WaitForSeconds(moveTime);
-        startTime = moveTime * n;
-        startWait = new WaitForSeconds(startTime);
         _characterIdx = _characterNum -1;
 
         float gridSize = DM.GridSize;
@@ -104,7 +100,7 @@ public class CharacterCtrl : MonoBehaviour
 
 
     }
-    IEnumerator CanMove(int characterIdx) 
+    public IEnumerator CanMove(int characterIdx) 
     {
         while(_characterMoveTile[characterIdx].Count > 0)
         {
@@ -116,9 +112,6 @@ public class CharacterCtrl : MonoBehaviour
 
                 break;
             }
-            //targetPos[characterIdx] = _characterMoveTile[characterIdx][_characterMoveCount[characterIdx]++];
-            //Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(targetPos[characterIdx]);
-            //if(targetPos[characterIdx] == DM.EndTilePos && _characterMoveTile[0].Count == _characterMoveTile[1].Count - 2)
             characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
             Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
             characters[characterIdx].canMove = true;
@@ -127,19 +120,7 @@ public class CharacterCtrl : MonoBehaviour
 
         }
     }
-    public IEnumerator CharacterMoveStart()
-    {
-        
-        //int characterIdx = 1;
-        yield return moveTime * 2;
-        while (_characterIdx >= 0)
-        {
-            yield return startWait;
-            StartCoroutine(CanMove(_characterIdx--));
-        }
-       SoundManager.instance.PlayFootSound();
-
-    }
+    
     void Move(int characterIdx)
     {
         Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
@@ -196,20 +177,21 @@ public class CharacterCtrl : MonoBehaviour
     }
     public void PrestoClear()
     {
-        
         if(!isFast)
         {
             int checkCount = 0;
+            int count = _characterMoveTile[0].Count - (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" +1];
+
             for (int i = 0; i < _characterNum; i++)
             {
                 int idx = _characterMoveTile[i].Count - 1;
                 Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(_characterMoveTile[i][idx]);
-                Debug.Log(DM.Tiles[tilePos.x, tilePos.y].type);
                 if (DM.Tiles[tilePos.x, tilePos.y].type != ETileType.END)
                     continue;
+                if ( count == _characterMoveTile[i].Count - (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" + (i+1)]
+                    )
                 checkCount++;
             }
-            Debug.Log(checkCount);
             if (checkCount == _characterNum)
             {
                 Time.timeScale = 3.0f;

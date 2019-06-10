@@ -429,6 +429,11 @@ Prefab:
       propertyPath: SFXEventPath
       value: event:/SFX/block/essensial
       objectReference: {fileID: 0}
+    - target: {fileID: 114140373094367754, guid: c7df6266aadcfe948b9324b90f1903c4,
+        type: 2}
+      propertyPath: footEventPath
+      value: event:/SFX/Charater/foot/foot
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114845206336524278, guid: c7df6266aadcfe948b9324b90f1903c4, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: c7df6266aadcfe948b9324b90f1903c4, type: 2}
@@ -830,6 +835,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Emitters:
+  - Target: {fileID: 0}
+    Params:
+    - Name: stage
+      Value: 0
   - Target: {fileID: 1663509910}
     Params:
     - Name: stage

@@ -55,13 +55,14 @@ public class MapManager : MonoBehaviour {
             for(int j = 0; j < mapSize; j++)
             {
 
-                if (DM.Tiles[i, j].type == ETileType.START || DM.Tiles[i, j].type == ETileType.BLOCK)
+                if (DM.Tiles[i, j].type == ETileType.BLOCK)
                     DM.Tiles[i, j].canDraw = false;
 
                 if (DM.Tiles[i, j].type == ETileType.NORMAL)
                     continue;
                 if(DM.Tiles[i, j].type == ETileType.START)
                 {
+                    DM.Tiles[i, j].canDraw = false;
                     DM.Tiles[i, j].dir = EDir.DOWN;
                     tilemap.SetTile(DM.Tiles[i, j].tilePos, otherBase[(int)DM.Tiles[i, j].type]);
                     continue;
