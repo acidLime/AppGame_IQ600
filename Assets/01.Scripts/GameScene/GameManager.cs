@@ -30,10 +30,6 @@ public class GameManager : MonoBehaviour {
         //UI.ShowCharacterInfo(idx);
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
     public void GameStart()
     {
         DataManager.instance.Init();

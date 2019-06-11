@@ -13,12 +13,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EditorBanks:
   - {fileID: 114604619337766248}
-  - {fileID: 114934315060001988}
-  - {fileID: 114227556794910786}
-  - {fileID: 114342866899342714}
-  - {fileID: 114095258863411384}
-  - {fileID: 114045705523020282}
-  - {fileID: 114933098437824176}
+  - {fileID: 114950519475396854}
+  - {fileID: 114096225838901290}
+  - {fileID: 114436174773073784}
+  - {fileID: 114211859426531046}
+  - {fileID: 114620344042495522}
+  - {fileID: 114010938830967872}
   EditorEvents:
   - {fileID: 114002385898265114}
   - {fileID: 114901142597914068}
@@ -34,10 +34,10 @@ MonoBehaviour:
   - {fileID: 114206318146122658}
   - {fileID: 114945050502103618}
   MasterBanks:
-  - {fileID: 114045705523020282}
+  - {fileID: 114620344042495522}
   StringsBanks:
   - {fileID: 114604619337766248}
-  stringsBankWriteTime: 636946569100000000
+  stringsBankWriteTime: 636952363354970212
   cacheVersion: 3
 --- !u!114 &114002385898265114
 MonoBehaviour:
@@ -53,7 +53,7 @@ MonoBehaviour:
   Path: event:/SFX/Charater/foot/foot
   guid: 8b77b2d99675ce4bb917f5d3e85c79eb
   Banks:
-  - {fileID: 114934315060001988}
+  - {fileID: 114950519475396854}
   IsStream: 0
   Is3D: 0
   IsOneShot: 0
@@ -78,6 +78,24 @@ MonoBehaviour:
   FileSizes:
   - Name: 
     Value: 6135872
+  Exists: 1
+--- !u!114 &114010938830967872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/stage.bank
+  m_EditorClassIdentifier: 
+  Path: D:\Unity\app\AppGame_IQ600\Assets\05.Sound\Desktop\stage.bank
+  lastModified: 636952363355458899
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 923808
   Exists: 1
 --- !u!114 &114033508531656078
 MonoBehaviour:
@@ -134,6 +152,24 @@ MonoBehaviour:
   - Name: 
     Value: 16640
   Exists: 1
+--- !u!114 &114096225838901290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/BGM.bank
+  m_EditorClassIdentifier: 
+  Path: D:\Unity\app\AppGame_IQ600\Assets\05.Sound\Desktop\BGM.bank
+  lastModified: 636952363355488821
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 6135872
+  Exists: 1
 --- !u!114 &114118001894855860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,12 +218,12 @@ MonoBehaviour:
   Path: event:/BGM/stage
   guid: 517b89064acb424cb2d73fbe4463cd4a
   Banks:
-  - {fileID: 114227556794910786}
+  - {fileID: 114096225838901290}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
   Parameters:
-  - {fileID: 114381674699578998}
+  - {fileID: 114541208875271750}
   MinDistance: 0
   MaxDistance: 0
   Length: 0
@@ -236,6 +272,22 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 0
+--- !u!114 &114164998173415088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/footclear/foot
+  m_EditorClassIdentifier: 
+  Name: foot
+  Min: 0
+  Max: 2
+  Default: 0
+  Exists: 1
 --- !u!114 &114166378983076114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,7 +302,7 @@ MonoBehaviour:
   Path: event:/BGM/scene
   guid: 531e90c3186f9e47b8a8307adb352928
   Banks:
-  - {fileID: 114227556794910786}
+  - {fileID: 114096225838901290}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
@@ -272,7 +324,7 @@ MonoBehaviour:
   Path: event:/SFX/UI/yes
   guid: 761a82844338834ba20b410fee2f16ab
   Banks:
-  - {fileID: 114342866899342714}
+  - {fileID: 114436174773073784}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -310,7 +362,7 @@ MonoBehaviour:
   Path: event:/SFX/stage/start 1sec
   guid: 7d2ee40cd2f0ca4ab3e95a480430a767
   Banks:
-  - {fileID: 114933098437824176}
+  - {fileID: 114010938830967872}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -318,6 +370,24 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 2037
+--- !u!114 &114211859426531046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/block.bank
+  m_EditorClassIdentifier: 
+  Path: D:\Unity\app\AppGame_IQ600\Assets\05.Sound\Desktop\block.bank
+  lastModified: 636952363354411693
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 16640
+  Exists: 1
 --- !u!114 &114227556794910786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -350,7 +420,7 @@ MonoBehaviour:
   Path: event:/SFX/stage/clear
   guid: 5302ce3bd48aee45b37c4750f34c7624
   Banks:
-  - {fileID: 114933098437824176}
+  - {fileID: 114010938830967872}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -434,7 +504,7 @@ MonoBehaviour:
   Path: event:/SFX/block/essensial
   guid: a22467d4f504664da7965c9ef4204cf7
   Banks:
-  - {fileID: 114095258863411384}
+  - {fileID: 114211859426531046}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -543,6 +613,24 @@ MonoBehaviour:
   FileSizes:
   - Name: 
     Value: 923808
+  Exists: 1
+--- !u!114 &114436174773073784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/ui.bank
+  m_EditorClassIdentifier: 
+  Path: D:\Unity\app\AppGame_IQ600\Assets\05.Sound\Desktop\ui.bank
+  lastModified: 636952363355089888
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 7072
   Exists: 1
 --- !u!114 &114437396013589820
 MonoBehaviour:
@@ -695,6 +783,22 @@ MonoBehaviour:
   - Name: 
     Value: 1490
   Exists: 1
+--- !u!114 &114541208875271750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/stage/stage
+  m_EditorClassIdentifier: 
+  Name: stage
+  Min: 0
+  Max: 3
+  Default: 0
+  Exists: 1
 --- !u!114 &114585233247300850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -747,11 +851,29 @@ MonoBehaviour:
   m_Name: bank:/Master Bank.strings.bank
   m_EditorClassIdentifier: 
   Path: Assets\05.Sound\Desktop\Master Bank.strings.bank
-  lastModified: 636946569100000000
+  lastModified: 636952363354970212
   LoadResult: 0
   FileSizes:
   - Name: 
     Value: 1490
+  Exists: 1
+--- !u!114 &114620344042495522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Master Bank.bank
+  m_EditorClassIdentifier: 
+  Path: D:\Unity\app\AppGame_IQ600\Assets\05.Sound\Desktop\Master Bank.bank
+  lastModified: 636952363354970212
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 12474
   Exists: 1
 --- !u!114 &114631263810804326
 MonoBehaviour:
@@ -767,7 +889,7 @@ MonoBehaviour:
   Path: event:/BGM/main
   guid: d2123adaffc32c46a30e814a9fb7ee5f
   Banks:
-  - {fileID: 114227556794910786}
+  - {fileID: 114096225838901290}
   IsStream: 1
   Is3D: 0
   IsOneShot: 0
@@ -855,7 +977,7 @@ MonoBehaviour:
   Path: event:/SFX/stage/fail
   guid: 4f7b38b4084dd74ca26d829d7644db06
   Banks:
-  - {fileID: 114933098437824176}
+  - {fileID: 114010938830967872}
   IsStream: 1
   Is3D: 0
   IsOneShot: 1
@@ -927,7 +1049,7 @@ MonoBehaviour:
   Path: event:/SFX/UI/no
   guid: d283ac5ce9e2ee4d82e06138f110793a
   Banks:
-  - {fileID: 114342866899342714}
+  - {fileID: 114436174773073784}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -967,7 +1089,7 @@ MonoBehaviour:
   Path: event:/SFX/block/slow
   guid: 415fdd78aaea6e4eaddc49548fff2435
   Banks:
-  - {fileID: 114095258863411384}
+  - {fileID: 114211859426531046}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -1125,12 +1247,12 @@ MonoBehaviour:
   Path: event:/SFX/Charater/foot/footclear
   guid: b4444e31b521184e9c6f3b50332f6924
   Banks:
-  - {fileID: 114934315060001988}
+  - {fileID: 114950519475396854}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
   Parameters:
-  - {fileID: 114295181266480618}
+  - {fileID: 114164998173415088}
   MinDistance: 0
   MaxDistance: 0
   Length: 695
@@ -1206,7 +1328,7 @@ MonoBehaviour:
   Path: event:/SFX/stage/start 0sec
   guid: 9575293d1e3aee4dbc4e02a0ef933e49
   Banks:
-  - {fileID: 114933098437824176}
+  - {fileID: 114010938830967872}
   IsStream: 0
   Is3D: 0
   IsOneShot: 1
@@ -1214,3 +1336,21 @@ MonoBehaviour:
   MinDistance: 0
   MaxDistance: 0
   Length: 727
+--- !u!114 &114950519475396854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/charater.bank
+  m_EditorClassIdentifier: 
+  Path: D:\Unity\app\AppGame_IQ600\Assets\05.Sound\Desktop\charater.bank
+  lastModified: 636952363354980175
+  LoadResult: 0
+  FileSizes:
+  - Name: 
+    Value: 17280
+  Exists: 1

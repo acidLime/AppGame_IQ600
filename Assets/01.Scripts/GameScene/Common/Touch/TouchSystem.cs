@@ -87,7 +87,6 @@ public class TouchSystem : MonoBehaviour {
             Vector3Int slidePos = touchEvent.GetTilePos();
             if (!touchEvent.CanTouchProc(slidePos) || !touchEvent.CanTileDraw(slidePos))
                 return;
-
             touchEvent.DrawTile(slidePos);
 
         };

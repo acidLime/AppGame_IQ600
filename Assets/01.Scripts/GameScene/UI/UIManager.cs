@@ -22,7 +22,8 @@ public class UIManager : MonoBehaviour {
     public GameObject playButton;
     public GameObject stopButton;
     public GameObject blackPanel;
-    public GameObject missionPanel;
+    public Image missionPanel;
+    public Sprite[] missionImage;
     public GameObject optionPanel;
     public GameObject[] trapPanel;
     static bool isClose = false;
@@ -56,7 +57,6 @@ public class UIManager : MonoBehaviour {
         times = new float[startTileNum];
         isClose = false;
         showMissionTimer = 5.0f;
-        SetMissionText();
         for (int i = 0; i < startTileNum; i++)
         {
             times[i] = (CharacterCtrl.instance.moveTime *
@@ -151,8 +151,11 @@ public class UIManager : MonoBehaviour {
     {
         if(!isClose)
         {
+            missionPanel.sprite = missionImage[DataManager.instance.StageLevel - 1];
+
             if (showMissionTimer >= 0.0f)
             {
+
                 Time.timeScale = 1.0f;
                 showMissionTimer -= 0.016f;
 
@@ -164,16 +167,11 @@ public class UIManager : MonoBehaviour {
             }
             else
             {
-                missionPanel.SetActive(false);
+                missionPanel.enabled = false;
                 Time.timeScale = 1.0f;
                 isClose = true;
             }
         }
-    }
-    public void SetMissionText()
-    {
-        missionText.supportRichText = true;
-        missionText.text = (string)DataManager.instance.MissionData[DataManager.instance.StageLevel]["missionText"];
     }
     
 }

@@ -28,15 +28,6 @@ public class LevelManager : MonoBehaviour {
             Destroy(instance);
         DontDestroyOnLoad(transform.gameObject);
     }
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
     public void StageOpen()
     {
         for(int i = 0; i<= clearLevel; i++)

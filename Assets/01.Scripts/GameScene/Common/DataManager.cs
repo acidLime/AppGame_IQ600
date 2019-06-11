@@ -30,6 +30,15 @@ public enum EDir
     LEFT,
     RIGHT
 }
+public struct MyTile
+{
+    public Vector3Int tilePos;
+    public EDir dir;
+    public ETileType type;
+    public bool canDraw;
+    public bool dontDestroy;
+}
+
 public class DataManager : MonoBehaviour
 {
     public static DataManager instance;
@@ -115,15 +124,12 @@ public class DataManager : MonoBehaviour
     public int TrapTileNum;
     private void Awake()
     {
-        //instance가 null이면
         if (instance == null)
         {
-            //instance는 자기자신으로
             instance = this;
         }
         else if (instance != null)
         {
-            //instance를 삭제
             Destroy(gameObject);
         }
         _tileData = CSVReader.Read("tile");
@@ -163,7 +169,6 @@ public class DataManager : MonoBehaviour
             }
             dataIdx++;
         }
-
         FindTile();
     }
     public void FindTile()
@@ -177,7 +182,6 @@ public class DataManager : MonoBehaviour
             {
                 if (Tiles[i, j].type == ETileType.START)
                 {
-
                     _startTilePos[dataIdx++] = Tiles[i, j].tilePos;
                 }
                 if (Tiles[i, j].type == ETileType.TRAP)

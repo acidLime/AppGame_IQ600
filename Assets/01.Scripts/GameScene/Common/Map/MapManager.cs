@@ -42,8 +42,6 @@ public class MapManager : MonoBehaviour {
             Destroy(gameObject);
         }
         DM = DataManager.instance;
-        //_tileData = CSVReader.Read("tile");
-
     }
     public void InitMap()
     {
@@ -69,7 +67,6 @@ public class MapManager : MonoBehaviour {
                 }
                 ObjectTilemap.SetTile(DM.Tiles[i, j].tilePos, otherBase[(int)DM.Tiles[i, j].type]);
                 tilemap.SetTileFlags(DM.Tiles[i, j].tilePos, TileFlags.None);
-
             }
         }
         

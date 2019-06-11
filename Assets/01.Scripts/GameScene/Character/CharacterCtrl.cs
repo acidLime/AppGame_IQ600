@@ -10,7 +10,20 @@ public enum CharacterDir
     LEFT,
     RIGHT
 }
+public struct Character
+{
+    public float startTime;
 
+    public int startNum;
+    public int characterMoveCount;
+
+    public bool canMove;
+
+    public Animator anim;
+    public Vector3 targetPos;
+    public GameObject character;
+    public bool arrived;
+}
 public class CharacterCtrl : MonoBehaviour
 {
     public Character[] characters;
@@ -19,7 +32,7 @@ public class CharacterCtrl : MonoBehaviour
     public GridLayout characterTilemap;
     public static CharacterCtrl instance;
     int _characterNum;
-    public GameObject characterPrefab;
+    public GameObject[] characterPrefab;
     bool isEssential = false;
     Vector3Int[] essentialPassingTile;
     List<List<Vector3>> _characterMoveTile;
@@ -41,25 +54,18 @@ public class CharacterCtrl : MonoBehaviour
     public float moveTime = 2.0f;
     public int n = 1;
 
-    // Use this for initialization
     void Start () {
-        //instance가 null이면
         if (instance == null)
         {
-            //instance는 자기자신으로
             instance = this;
         }
         else if (instance != null)
         {
-            //instance를 삭제
             Destroy(gameObject);
         }
         DM = DataManager.instance;
-        //Init();
-
     }
 
-    // Update is called once per frame
     void Update ()
     {
         for(int characterIdx = 0; characterIdx < _characterNum; characterIdx++)
@@ -68,7 +74,6 @@ public class CharacterCtrl : MonoBehaviour
             {
                 Move(characterIdx);
             }
-
         }
     }
     public void Init()
@@ -89,7 +94,7 @@ public class CharacterCtrl : MonoBehaviour
             Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
 
-            characters[i].character = Instantiate(characterPrefab, worldPos, Quaternion.identity);
+            characters[i].character = Instantiate(characterPrefab[i], worldPos, Quaternion.identity);
             characters[i].anim = characters[i].character.GetComponentInChildren<Animator>();
             characters[i].characterMoveCount = 0;
             characters[i].canMove = false;
@@ -97,8 +102,6 @@ public class CharacterCtrl : MonoBehaviour
             characters[i].character.SetActive(true);
             characters[i].character.transform.localPosition = worldPos;
         }
-
-
     }
     public IEnumerator CanMove(int characterIdx) 
     {

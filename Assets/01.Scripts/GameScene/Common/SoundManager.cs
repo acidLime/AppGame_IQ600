@@ -6,7 +6,6 @@ public class SoundManager : MonoBehaviour {
 
     public float changeTime;
     public float playTime = 0;
-    bool isChanged = false;
     [FMODUnity.EventRef]
     public string BGMEventPath;
     [FMODUnity.EventRef]
@@ -42,12 +41,6 @@ public class SoundManager : MonoBehaviour {
         PlayOnBgm("event:/BGM/main");
     }
 
-    // Update is called once per frame
-    void Update ()
-    {
-        ChangeParameter();
-    }
-    
     public void PlayOnBgm(string bgmPath)
     {
         BGMEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
@@ -58,25 +51,8 @@ public class SoundManager : MonoBehaviour {
         BGMEvent.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform));
         BGMEvent.start();
     }
-    void ChangeParameter()
-    {
-        //playTime += 0.1f * Time.deltaTime;
-        //if(playTime >= changeTime)
-        //{
-        //    if(isChanged)
-        //    {
-        //        BGMParameter.setValue(0);
-        //    }
-        //    else
-        //    {
-        //        BGMParameter.setValue(1);
-        //    }
-        //}
-        //playTime = 0.0f;
-    }
     public void PlaySfxSound(string sfxPath)
     {
-
         SFXEventPath = sfxPath;
         SFXEvent = FMODUnity.RuntimeManager.CreateInstance(SFXEventPath);
         SFXEvent.getParameter("Location", out SFXParameter);
