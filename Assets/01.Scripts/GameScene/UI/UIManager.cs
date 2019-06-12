@@ -22,8 +22,9 @@ public class UIManager : MonoBehaviour {
     public GameObject playButton;
     public GameObject stopButton;
     public GameObject blackPanel;
-    public Image missionPanel;
-    public Sprite[] missionImage;
+    public GameObject missionPanel;
+    public Image missionImage;
+    public Sprite[] missionSprite;
     public GameObject optionPanel;
     public GameObject[] trapPanel;
     static bool isClose = false;
@@ -95,11 +96,17 @@ public class UIManager : MonoBehaviour {
         {
             if(times[i] > 0)
                 times[i] -= Time.deltaTime;
+            //times[i] -= CharacterCtrl.instance.timeSpeed * Time.deltaTime;
+
             else
             {
                 timer[i].enabled = false;
                 timeText[i].enabled = false;
-                StartCoroutine(CharacterCtrl.instance.CanMove(i));
+                if(CharacterCtrl.instance.characters[i].moveStart == false)
+                {
+                    StartCoroutine(CharacterCtrl.instance.CanMove(i));
+                    CharacterCtrl.instance.characters[i].moveStart = true;
+                }
             }
             timeText[i].text = Mathf.Ceil(times[i]).ToString();
         }
@@ -151,7 +158,7 @@ public class UIManager : MonoBehaviour {
     {
         if(!isClose)
         {
-            missionPanel.sprite = missionImage[DataManager.instance.StageLevel - 1];
+            missionImage.sprite = missionSprite[DataManager.instance.StageLevel - 1];
 
             if (showMissionTimer >= 0.0f)
             {
@@ -167,7 +174,7 @@ public class UIManager : MonoBehaviour {
             }
             else
             {
-                missionPanel.enabled = false;
+                missionPanel.SetActive(false);
                 Time.timeScale = 1.0f;
                 isClose = true;
             }

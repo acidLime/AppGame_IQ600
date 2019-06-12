@@ -16,7 +16,7 @@ public struct Character
 
     public int startNum;
     public int characterMoveCount;
-
+    public bool moveStart;
     public bool canMove;
 
     public Animator anim;
@@ -27,7 +27,7 @@ public struct Character
 public class CharacterCtrl : MonoBehaviour
 {
     public Character[] characters;
-
+    public float timeSpeed = 1.0f;
     DataManager DM;
     public GridLayout characterTilemap;
     public static CharacterCtrl instance;
@@ -86,28 +86,32 @@ public class CharacterCtrl : MonoBehaviour
 
         float gridSize = DM.GridSize;
         _characterMoveTile = new List<List<Vector3>>();
-        
         for (int i = 0; i < _characterNum; i++)
         {
             characters[i] = new Character();
             _characterMoveTile.Add(new List<Vector3>());
             Vector3 worldPos = characterTilemap.CellToWorld(DM.StartTilePos[i]);
             _characterMoveTile[i].Add(worldPos);
-
             characters[i].character = Instantiate(characterPrefab[i], worldPos, Quaternion.identity);
             characters[i].anim = characters[i].character.GetComponentInChildren<Animator>();
             characters[i].characterMoveCount = 0;
             characters[i].canMove = false;
             characters[i].arrived = false;
+            characters[i].moveStart = false;
             characters[i].character.SetActive(true);
             characters[i].character.transform.localPosition = worldPos;
+            characters[i].anim.SetBool("IsMoving", false);
         }
+        if((int)DM.MissionData[DM.StageLevel - 1]["possion"] == 1)
+        {
+            isEssential = true;
+        }
+
     }
     public IEnumerator CanMove(int characterIdx) 
     {
         while(_characterMoveTile[characterIdx].Count > 0)
         {
-            
             if(_characterMoveTile[characterIdx].Count <= characters[characterIdx].characterMoveCount)
             {
                 StopAllCoroutines();
@@ -117,6 +121,11 @@ public class CharacterCtrl : MonoBehaviour
             }
             characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
             Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
+            if(tilePos == DM.StartTilePos[characterIdx])
+            {
+                characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
+                tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
+            }
             characters[characterIdx].canMove = true;
             
             yield return moveWait;
@@ -126,12 +135,16 @@ public class CharacterCtrl : MonoBehaviour
     
     void Move(int characterIdx)
     {
+        characters[characterIdx].anim.SetBool("IsMoving", true);
+        characters[characterIdx].anim.SetBool("IsSlow", false);
+        characters[characterIdx].anim.SetBool("IsTrap", false);
+
         Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
         SetAnimation(characterIdx, DM.Tiles[tilePos.x, tilePos.y].dir);
         Vector3 diff = characters[characterIdx].character.transform.position - characters[characterIdx].targetPos;
         
         characters[characterIdx].character.transform.position = Vector3.MoveTowards(characters[characterIdx].character.transform.position,
-            characters[characterIdx].targetPos, 1.0f * Time.deltaTime);
+            characters[characterIdx].targetPos, timeSpeed * Time.deltaTime);
 
         if (diff.sqrMagnitude < 0.01f * 0.01f)
         {
@@ -141,6 +154,8 @@ public class CharacterCtrl : MonoBehaviour
             if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.TRAP)
             {
                 SoundManager.instance.PlaySfxSound("event:/SFX/block/essensial");
+                characters[characterIdx].anim.SetBool("IsTrap", true);
+
                 MapManager.instance.ObjectTilemap.SetTile(tilePos, null);
                 isEssential = true;
 
@@ -148,7 +163,7 @@ public class CharacterCtrl : MonoBehaviour
             if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.SLOW)
             {
                 SoundManager.instance.PlaySfxSound("event:/SFX/block/slow");
-                characters[characterIdx].anim.SetTrigger("Slow");
+                characters[characterIdx].anim.SetBool("IsSlow", true);
             }
             DM.Tiles[tilePos.x, tilePos.y].dontDestroy = true;
             MapManager.instance.tilemap.SetTileFlags(tilePos, TileFlags.None);
@@ -183,23 +198,22 @@ public class CharacterCtrl : MonoBehaviour
         if(!isFast)
         {
             int checkCount = 0;
-            int count = _characterMoveTile[0].Count - (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" +1];
+            int count = _characterMoveTile[0].Count + (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" +1];
 
             for (int i = 0; i < _characterNum; i++)
             {
                 int idx = _characterMoveTile[i].Count - 1;
                 Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(_characterMoveTile[i][idx]);
-                if (DM.Tiles[tilePos.x, tilePos.y].type != ETileType.END)
-                    continue;
-                if ( count == _characterMoveTile[i].Count - (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" + (i+1)]
-                    )
-                checkCount++;
+                if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END &&
+                    count == _characterMoveTile[i].Count +
+                    (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" + (i + 1)])
+                        checkCount++;
             }
             if (checkCount == _characterNum)
             {
                 Time.timeScale = 3.0f;
                 SoundManager.instance.PlaySfxSound("event:/SFX/Charater/foot/footclear");
-                moveWait = new WaitForSeconds(1.0f);
+                timeSpeed = 4.0f;
                 checkCount = 0;
                 isFast = true;
             }
