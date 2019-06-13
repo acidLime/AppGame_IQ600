@@ -34,6 +34,7 @@ public class CharacterCtrl : MonoBehaviour
     int _characterNum;
     public GameObject[] characterPrefab;
     bool isEssential = false;
+    bool isSlow = false;
     Vector3Int[] essentialPassingTile;
     List<List<Vector3>> _characterMoveTile;
     public List<List<Vector3>> CharacterMoveTile
@@ -121,11 +122,11 @@ public class CharacterCtrl : MonoBehaviour
             }
             characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
             Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
-            if(tilePos == DM.StartTilePos[characterIdx])
-            {
-                characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
-                tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
-            }
+            //if(tilePos == DM.StartTilePos[characterIdx] && _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount] != null)
+            //{
+            //    characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount];
+            //    tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
+            //}
             characters[characterIdx].canMove = true;
             
             yield return moveWait;
@@ -135,7 +136,6 @@ public class CharacterCtrl : MonoBehaviour
     
     void Move(int characterIdx)
     {
-        characters[characterIdx].anim.SetBool("IsMoving", true);
         characters[characterIdx].anim.SetBool("IsSlow", false);
         characters[characterIdx].anim.SetBool("IsTrap", false);
 
@@ -149,6 +149,7 @@ public class CharacterCtrl : MonoBehaviour
         if (diff.sqrMagnitude < 0.01f * 0.01f)
         {
             characters[characterIdx].canMove = false;
+
             if (DM.Tiles[tilePos.x, tilePos.y].type == ETileType.END)
                 characters[characterIdx].arrived = true;
             if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.TRAP)
@@ -162,7 +163,11 @@ public class CharacterCtrl : MonoBehaviour
             }
             if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.SLOW)
             {
-                SoundManager.instance.PlaySfxSound("event:/SFX/block/slow");
+                if (isSlow == false)
+                {
+                    SoundManager.instance.PlaySfxSound("event:/SFX/block/slow");
+                    isSlow = true;
+                }
                 characters[characterIdx].anim.SetBool("IsSlow", true);
             }
             DM.Tiles[tilePos.x, tilePos.y].dontDestroy = true;
@@ -217,6 +222,13 @@ public class CharacterCtrl : MonoBehaviour
                 checkCount = 0;
                 isFast = true;
             }
+        }
+    }
+    public void PlayOnAnim(string key)
+    {
+        for(int i = 0; i< _characterNum; i++)
+        {
+            characters[i].anim.SetTrigger(key);
         }
     }
 }

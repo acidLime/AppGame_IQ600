@@ -8,8 +8,19 @@ public class MapManager : MonoBehaviour {
     public Tilemap tilemap;
     public Tilemap backGroundTilemap;
     public Tilemap ObjectTilemap;
-    [SerializeField] TileBase[] otherBase;
-    [SerializeField] TileBase[] roadTiles;
+    public GameObject BackGroundImage;
+    public Sprite[] BackGroundImageSet;
+
+    public TileBase[] BaseTileSet1;
+    public TileBase[] BaseTileSet2;
+    public TileBase[] BaseTileSet3;
+
+    public TileBase[] roadTileSet1;
+    public TileBase[] roadTileSet2;
+    public TileBase[] roadTileSet3;
+
+    TileBase[] otherBase;
+    TileBase[] roadTiles;
     public GameObject grid;
     DataManager DM;
     
@@ -46,8 +57,24 @@ public class MapManager : MonoBehaviour {
     public void InitMap()
     {
         int mapSize = DM.MapSize;
-
-
+        if(DM.StageLevel > 0 && DM.StageLevel <= 3)
+        {
+            otherBase = BaseTileSet1;
+            roadTiles = roadTileSet1;
+            BackGroundImage.GetComponent<SpriteRenderer>().sprite = BackGroundImageSet[0];
+        }
+        else if (DM.StageLevel > 3 && DM.StageLevel <= 6)
+        {
+            otherBase = BaseTileSet2;
+            roadTiles = roadTileSet2;
+            BackGroundImage.GetComponent<SpriteRenderer>().sprite = BackGroundImageSet[1];
+        }
+        else if (DM.StageLevel > 6 && DM.StageLevel <= 9)
+        {
+            otherBase = BaseTileSet3;
+            roadTiles = roadTileSet3;
+            BackGroundImage.GetComponent<SpriteRenderer>().sprite = BackGroundImageSet[2];
+        }
         for (int i = 0; i < mapSize; i++)
         {
             for(int j = 0; j < mapSize; j++)
@@ -66,7 +93,6 @@ public class MapManager : MonoBehaviour {
                     continue;
                 }
                 ObjectTilemap.SetTile(DM.Tiles[i, j].tilePos, otherBase[(int)DM.Tiles[i, j].type]);
-                tilemap.SetTileFlags(DM.Tiles[i, j].tilePos, TileFlags.None);
             }
         }
         
@@ -135,6 +161,8 @@ public class MapManager : MonoBehaviour {
         float dir = 0.0f;
         if(prevDir == curDir)
         {
+            tilemap.SetTileFlags(prevTilePos, TileFlags.None);
+
             tilemap.SetTile(prevTilePos, roadTiles[(int)_tileIdx]);
             tilemap.SetColor(prevTilePos, new Color(1, 0, 0, 0.3f));
             return;
@@ -190,7 +218,8 @@ public class MapManager : MonoBehaviour {
                 }
                 break; 
         } 
-        Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, dir)); 
+        Matrix4x4 matrix = Matrix4x4.Rotate(Quaternion.Euler(0.0f, 0.0f, dir));
+        tilemap.SetTileFlags(prevTilePos, TileFlags.None);
         tilemap.SetTransformMatrix(prevTilePos, matrix);
         tilemap.SetColor(prevTilePos, new Color(1, 0, 0, 0.3f));
     }

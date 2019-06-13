@@ -527,7 +527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7c57119a264b547870a60ae74c9a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearLevel: 2
+  _clearLevel: 1
   _stageLevel: 1
   UI_StagePlayButton:
   - {fileID: 41622456}

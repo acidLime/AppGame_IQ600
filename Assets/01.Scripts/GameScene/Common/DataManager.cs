@@ -141,7 +141,6 @@ public class DataManager : MonoBehaviour
         _stageLevel = LevelManager.instance.StageLevel;
         _mapSize = (int)_tileData[_stageLevel - 1]["mapSize"];
         _gridSize = 8.8f / _mapSize;
-        Debug.Log(_missionData[0]["stage"]);
         _startTileNum = (int)_characterData[_stageLevel-1]["characterNum"];
         _tiles = new MyTile[_mapSize, _mapSize];
         for(int i = 0; i < _mapSize; i++)

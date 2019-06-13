@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+public enum Tutorial
+{
+    STAGE1,
+    STAGE1_DRAG,
+    STAGE2,
+    STAGE3
+}
 public class UIManager : MonoBehaviour {
 
     int startTileNum;
@@ -15,6 +21,7 @@ public class UIManager : MonoBehaviour {
     public Text[] characterInfoText;
     public Text missionText;
     public static UIManager instance;
+    public GameObject[] TimerObject;
     public Image[] timer;
     public Text[] timeText;
     float[] times;
@@ -27,7 +34,15 @@ public class UIManager : MonoBehaviour {
     public Sprite[] missionSprite;
     public GameObject optionPanel;
     public GameObject[] trapPanel;
+    public Sprite[] tutorialSpriteSet;
+    public Image tutorialImage;
+    public GameObject tutorialPanel;
+
     static bool isClose = false;
+    bool isStart = false;
+    bool isTutorialMode = true;
+    public GameObject nightOverRey;
+    float alpha = 1.0f;
 
     // Use this for initialization
     void Start ()
@@ -43,12 +58,18 @@ public class UIManager : MonoBehaviour {
             //instance를 삭제
             Destroy(gameObject);
         }
+        //if(isTutorialMode)
+        //{
+        //    PlayTutorialMode(Tutorial.STAGE1);
+        //}
     }
 
     // Update is called once per frame
     void Update () {
         TimeCounter();
         ShowMissionPanel();
+        if (isStart && alpha > 0.0f)
+            EndNight();
     }
     public void Init()
     {
@@ -60,6 +81,7 @@ public class UIManager : MonoBehaviour {
         showMissionTimer = 5.0f;
         for (int i = 0; i < startTileNum; i++)
         {
+            TimerObject[i].SetActive(true);
             times[i] = (CharacterCtrl.instance.moveTime *
                 (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" + (i + 1)]) + 4;
             timer[i].rectTransform.localPosition =
@@ -106,6 +128,13 @@ public class UIManager : MonoBehaviour {
                 {
                     StartCoroutine(CharacterCtrl.instance.CanMove(i));
                     CharacterCtrl.instance.characters[i].moveStart = true;
+                    SoundManager.instance.PlaySfxSound("event:/SFX/stage/start 0sec");
+                    if(!isStart)
+                    {
+                        EndNight();
+                        SoundManager.instance.PlayFootSound();
+                        isStart = true;
+                    }
                 }
             }
             timeText[i].text = Mathf.Ceil(times[i]).ToString();
@@ -117,9 +146,6 @@ public class UIManager : MonoBehaviour {
         {
             trapPanel[i].SetActive(true);
         }
-    }
-    public void SoundOption()
-    {
     }
     public void GameOption()
     {
@@ -134,6 +160,7 @@ public class UIManager : MonoBehaviour {
 
         Time.timeScale = 1.0f;
         SoundManager.instance.BGMParameter.setValue(3);
+        SoundManager.instance.footEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
 
         SceneManager.LoadScene("StageSelectScene");
         SoundManager.instance.PlaySfxSound("event:/SFX/UI/no");
@@ -163,14 +190,13 @@ public class UIManager : MonoBehaviour {
             if (showMissionTimer >= 0.0f)
             {
 
-                Time.timeScale = 1.0f;
+                
                 showMissionTimer -= 0.016f;
 
                 int touchCount = Input.touchCount;
                 if (touchCount == 1)
                     showMissionTimer = -1f;
                 
-                Time.timeScale = 0.0f;
             }
             else
             {
@@ -180,5 +206,44 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-    
+    public void EndNight()
+    {
+        alpha -= 0.006f;
+        nightOverRey.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, alpha);
+    }
+    public void PlayTutorialMode(Tutorial mode)
+    {
+        tutorialPanel.SetActive(true);
+        switch(mode)
+        {
+            case Tutorial.STAGE1:
+                ShowTutorial(0, 5);
+                break;
+            case Tutorial.STAGE1_DRAG:
+                ShowTutorial(5, 7);
+                break;
+            case Tutorial.STAGE2:
+                ShowTutorial(7, 13);
+                break;
+            case Tutorial.STAGE3:
+                ShowTutorial(13, 18);
+                break;
+        }
+    }
+    void ShowTutorial(int start, int end)
+    {
+        int idx = start;
+        while(idx != end)
+        {
+            Time.timeScale = 1.0f;
+            int touchCount = Input.touchCount;
+            if (touchCount == 1)
+            {
+                tutorialImage.sprite = tutorialSpriteSet[idx];
+                idx++;
+            }
+            Time.timeScale = 0.0f;
+        }
+
+    }
 }
