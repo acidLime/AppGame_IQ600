@@ -1573,15 +1573,10 @@ MonoBehaviour:
   - {fileID: 120800328}
   gameoverPanel: {fileID: 1458831903}
   clearPanel: {fileID: 1412299228}
-  gameoverImage:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   characterInfoText:
   - {fileID: 480696543}
   - {fileID: 931353038}
   - {fileID: 1008401911}
-  missionText: {fileID: 0}
   TimerObject:
   - {fileID: 687738673}
   - {fileID: 405007658}
@@ -3312,7 +3307,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 904305525}
-        m_MethodName: ReturnToTitle
+        m_MethodName: NextStage
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4124,7 +4119,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 904305525}
-        m_MethodName: ReturnToTitle
+        m_MethodName: ReStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

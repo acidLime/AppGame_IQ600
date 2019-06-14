@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour {
         CharacterCtrl.instance.PlayOnAnim("Failed");
         UIManager.instance.ShowGameOver(Random.Range(0,3));
         SoundManager.instance.BGMParameter.setValue(1);
-        Time.timeScale = 0.0f;
+        //Time.timeScale = 0.0f;
     }
     public void EndGame()
     {
@@ -59,6 +59,6 @@ public class GameManager : MonoBehaviour {
         SoundManager.instance.SFXEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         SoundManager.instance.footEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         LevelManager.instance.ClearLevel++;
-        Time.timeScale = 0.0f;
+        //Time.timeScale = 0.0f;
     }
 }

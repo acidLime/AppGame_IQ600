@@ -32,6 +32,9 @@ public class CharacterCtrl : MonoBehaviour
     public GridLayout characterTilemap;
     public static CharacterCtrl instance;
     int _characterNum;
+    bool isClear = false;
+    bool isEnd = false;
+
     public GameObject[] characterPrefab;
     bool isEssential = false;
     bool isSlow = false;
@@ -101,7 +104,7 @@ public class CharacterCtrl : MonoBehaviour
             characters[i].moveStart = false;
             characters[i].character.SetActive(true);
             characters[i].character.transform.localPosition = worldPos;
-            characters[i].anim.SetBool("IsMoving", false);
+            characters[i].character.transform.localScale = new Vector3(DM.GridSize, DM.GridSize, 1);
         }
         if((int)DM.MissionData[DM.StageLevel - 1]["possion"] == 1)
         {
@@ -111,22 +114,24 @@ public class CharacterCtrl : MonoBehaviour
     }
     public IEnumerator CanMove(int characterIdx) 
     {
-        while(_characterMoveTile[characterIdx].Count > 0)
+        while(_characterMoveTile[characterIdx].Count > 0 && isEnd == false)
         {
             if(_characterMoveTile[characterIdx].Count <= characters[characterIdx].characterMoveCount)
             {
-                StopAllCoroutines();
-                GameManager.instance.GameOver();
+                if(!isClear)
+                    GameManager.instance.GameOver();
+                for (int i = 0; i < _characterNum; i++)
+                {
+                    characters[i].canMove = false;
 
+                }
+                StopCoroutine(CanMove(characterIdx));
+                isEnd = true;
                 break;
+
             }
             characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount++];
             Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
-            //if(tilePos == DM.StartTilePos[characterIdx] && _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount] != null)
-            //{
-            //    characters[characterIdx].targetPos = _characterMoveTile[characterIdx][characters[characterIdx].characterMoveCount];
-            //    tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
-            //}
             characters[characterIdx].canMove = true;
             
             yield return moveWait;
@@ -140,9 +145,12 @@ public class CharacterCtrl : MonoBehaviour
         characters[characterIdx].anim.SetBool("IsTrap", false);
 
         Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[characterIdx].targetPos);
-        SetAnimation(characterIdx, DM.Tiles[tilePos.x, tilePos.y].dir);
+        if (DM.Tiles[tilePos.x, tilePos.y].type != ETileType.END &&
+            DM.Tiles[tilePos.x, tilePos.y].type != ETileType.OVERLAP)
+        {
+            SetAnimation(characterIdx, DM.Tiles[tilePos.x, tilePos.y].dir);
+        }
         Vector3 diff = characters[characterIdx].character.transform.position - characters[characterIdx].targetPos;
-        
         characters[characterIdx].character.transform.position = Vector3.MoveTowards(characters[characterIdx].character.transform.position,
             characters[characterIdx].targetPos, timeSpeed * Time.deltaTime);
 
@@ -170,6 +178,10 @@ public class CharacterCtrl : MonoBehaviour
                 }
                 characters[characterIdx].anim.SetBool("IsSlow", true);
             }
+            if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.OVERLAP)
+            {
+                FailCheck();
+            }
             DM.Tiles[tilePos.x, tilePos.y].dontDestroy = true;
             MapManager.instance.tilemap.SetTileFlags(tilePos, TileFlags.None);
             MapManager.instance.tilemap.SetColor(tilePos, new Color(0.75f, 0.75f, 0.75f, 1.0f));
@@ -193,9 +205,29 @@ public class CharacterCtrl : MonoBehaviour
         if(checkCount == 0)
         {
             if (isEssential)
+            {
+                for (int i = 0; i < _characterNum; i++)
+                {
+                    characters[i].canMove = false;
+                    StopCoroutine(CanMove(i));
+                }
                 GameManager.instance.EndGame();
+                isClear = true;
+                isEnd = true;
+            }
             else
-                GameManager.instance.GameOver();
+            {
+                if(isClear == false)
+                {
+                    for(int i = 0; i < _characterNum; i++)
+                    {
+                        characters[i].canMove = false;
+                        StopCoroutine(CanMove(i));
+                    }
+                    isEnd = true;
+                    GameManager.instance.GameOver();
+                }
+            }
         }
     }
     public void PrestoClear()
@@ -229,6 +261,31 @@ public class CharacterCtrl : MonoBehaviour
         for(int i = 0; i< _characterNum; i++)
         {
             characters[i].anim.SetTrigger(key);
+        }
+    }
+    void FailCheck()
+    {
+        int count = 0;
+        for(int i= 0; i< _characterNum; i++)
+        {
+            Vector3Int tilePos = MapManager.instance.tilemap.WorldToCell(characters[i].targetPos);
+            if(DM.Tiles[tilePos.x, tilePos.y].type == ETileType.OVERLAP)
+            {
+                count++;
+            }
+        }
+        if (count > 1)
+        {
+            if (isClear == false)
+            {
+                for (int i = 0; i < _characterNum; i++)
+                {
+                    characters[i].canMove = false;
+                    StopCoroutine(CanMove(i));
+                }
+                isEnd = true;
+                GameManager.instance.GameOver();
+            }
         }
     }
 }

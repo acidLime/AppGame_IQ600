@@ -17,9 +17,7 @@ public class UIManager : MonoBehaviour {
     public GameObject[] characterInfo;
     public GameObject gameoverPanel;
     public GameObject clearPanel;
-    public Sprite[] gameoverImage;
     public Text[] characterInfoText;
-    public Text missionText;
     public static UIManager instance;
     public GameObject[] TimerObject;
     public Image[] timer;
@@ -85,7 +83,7 @@ public class UIManager : MonoBehaviour {
             times[i] = (CharacterCtrl.instance.moveTime *
                 (int)DataManager.instance.CharacterData[DataManager.instance.StageLevel - 1]["warrior" + (i + 1)]) + 4;
             timer[i].rectTransform.localPosition =
-                MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]) + new Vector3(0.6f,1f, 0);
+                MapManager.instance.tilemap.CellToWorld(DataManager.instance.StartTilePos[i]) + new Vector3(0.35f * DataManager.instance.GridSize,1.0f * DataManager.instance.GridSize, 0);
         }
     }
     public void ShowCharacterInfo()
@@ -185,6 +183,8 @@ public class UIManager : MonoBehaviour {
     {
         if(!isClose)
         {
+            Time.timeScale = 0.0f;
+
             missionImage.sprite = missionSprite[DataManager.instance.StageLevel - 1];
 
             if (showMissionTimer >= 0.0f)
@@ -245,5 +245,14 @@ public class UIManager : MonoBehaviour {
             Time.timeScale = 0.0f;
         }
 
+    }
+    public void ReStart()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
+    public void NextStage()
+    {
+        LevelManager.instance.StageLevel++;
+        SceneManager.LoadScene("GameScene");
     }
 }

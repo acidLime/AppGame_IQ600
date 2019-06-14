@@ -34,6 +34,8 @@ public struct MyTile
 {
     public Vector3Int tilePos;
     public EDir dir;
+    public EDir prevDir;
+
     public ETileType type;
     public bool canDraw;
     public bool dontDestroy;
